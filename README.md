@@ -16,7 +16,8 @@ flex 2.5.37
 ```
 
 * Bison
-```bash
+
+* ```bash
 $ bison --version
 bison (GNU Bison) 3.0.4
 Written by Robert Corbett and Richard Stallman.
