@@ -10,10 +10,11 @@
 ### Current project versions
 * Flex
 
-  ```bash
-  $ flex --version
-  flex 2.5.37
-  ```
+```bash
+$ flex --version
+flex 2.5.37
+```
+
 * Bison
 
   ```bash
