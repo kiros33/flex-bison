@@ -2,7 +2,7 @@
 %option header-file = "fb1-1.h"
 
 /* generate implementation file */
-%option outfile = "fb1-1.c"
+%option outfile = "fb1-1.cpp"
 
 /* %option c++ */
 

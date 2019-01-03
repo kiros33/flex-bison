@@ -31,7 +31,7 @@ BISON_SRC_DIR = $(MAKE_DIR)
 #MAIN_SRC = $(SRC_DIR)/main.cpp
 MAIN_SRC = 
 
-_FLEXBISON_OBJS = fb1-1.o
+_FLEXBISON_OBJS = fb1-1.opp
 FLEXBISON_OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_FLEXBISON_OBJS))
 _OBJS = 
 OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_OBJS))
@@ -62,16 +62,16 @@ $(OBJ_DIR)/%.opp: $(SRC_DIR)/%.cpp
 
 fb: grammar lexical $(FLEXBISON_OBJS) $(OBJS)
 	$(ECHO) "############################## Linking... $@"
-	$(CC) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CFLAGS)
-#	$(CXX) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CXXFLAGS)
+#	$(CC) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CFLAGS) -ll
+	$(CXX) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CXXFLAGS) -ll
 #	$(MAKE) test
 
-test: $(BIN_DIR)/addb
+test: $(MAKE_DIR)/$(BIN_DIR)/fb
 	$(ECHO) "############################## Testing..."
 	@$<
 	$(ECHO)
 
-test0: $(BIN_DIR)/addb
+test0: $(MAKE_DIR)/$(BIN_DIR)/fb
 	$(ECHO) "############################## Testing..."
 	@$< $(TEST_DIR)/sample0.gmd
 	$(ECHO)
@@ -88,13 +88,16 @@ enter: test/$@
 
 clean:
 	$(ECHO) "############################## cleaning lexcial output files..."
-	$(RM) "$(FLEX_SRC_DIR)/fb1-1.c" "$(FLEX_SRC_DIR)/fb1-1.h" "$(FLEX_SRC_DIR)/fb1-1.output"
+	$(RM) "$(FLEX_SRC_DIR)/fb1-1.cpp" "$(FLEX_SRC_DIR)/fb1-1.h" "$(FLEX_SRC_DIR)/fb1-1.output"
 
 	$(ECHO) "############################## cleaning grammar output files..."
 #	$(RM) "$(BISON_SRC_DIR)/addb_parser.cpp" "$(BISON_SRC_DIR)/addb_parser.h" "$(BISON_SRC_DIR)/addb_parser.output"
 
 	$(ECHO) "############################## cleaning flexbison library files"
 	$(RM) $(FLEXBISON_OBJS) $(OBJS) $(LIB_DIR)/flexbison.a $(BIN_DIR)/fb
+
+	$(ECHO) "############################## cleaning other files"
+	$(RM) a.out
 
 
 
