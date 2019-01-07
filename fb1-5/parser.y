@@ -4,15 +4,6 @@
 /* the parser implementation file name */
 %output "parser.cpp"
 
-/* Visual Studio 빌드시 라이브러리 추가
-   C:\cygwin64\usr\local\lib\liby.a
-   C:\cygwin64\usr\local\lib\libfl.a
-   64비트만 빌드됨
-*/
-/* %option noyywrap */
-
-/* %option c++ */
-
 /* simplest version of calculator */
 %{
 	#include <stdio.h>
@@ -34,17 +25,17 @@ calclist: /* nothing */
 	| calclist exp EOL { printf("= %d\n", $2); }
 	;
 
-exp: factor { $$ = $1; }
+exp: factor
 	| exp ADD factor { $$ = $1 + $3; }
 	| exp SUB factor { $$ = $1 - $3; }
 	;
 
-factor: term { $$ = $1; }
+factor: term
 	| factor MUL term { $$ = $1 * $3; }
 	| factor DIV term { $$ = $1 / $3; }
 	;
 
-term: NUMBER { $$ = $1; }
+term: NUMBER
 	| ABS term { $$ = ($2 >= 0) ? $2 : -$2; }
 	;
 
