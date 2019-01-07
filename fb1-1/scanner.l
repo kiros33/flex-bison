@@ -1,8 +1,12 @@
 /* generate header file */
-%option header-file = "fb1-1.h"
+%option header-file = "scanner.h"
 
 /* generate implementation file */
-%option outfile = "fb1-1.cpp"
+%option outfile = "scanner.cpp"
+
+%option always-interactive nounistd
+
+%option noyywrap
 
 /* %option c++ */
 

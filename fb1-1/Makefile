@@ -31,23 +31,27 @@ BISON_SRC_DIR = $(MAKE_DIR)
 #MAIN_SRC = $(SRC_DIR)/main.cpp
 MAIN_SRC = 
 
-_FLEXBISON_OBJS = fb1-1.opp
+_FLEXBISON_OBJS = scanner.opp
 FLEXBISON_OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_FLEXBISON_OBJS))
 _OBJS = 
 OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_OBJS))
 
-all:
-	$(info ---------- $(FLEXBISON_OBJS) -----------)
+.PHONY: clean lexical grammar
+
+all: lexical grammar
+	$(info ##############################)
+	$(info # Build all)
+	$(info ##############################)
 	$(MAKE) fb
 
-grammar:
+grammar: 
 	$(ECHO) "############################## Generating... parser"
-#	$(CD) "$(BISON_SRC_DIR)" && bison addb_parser.y
+#	$(CD) "$(BISON_SRC_DIR)" && bison parser.y
 	$(ECHO)
 
-lexical:
+lexical: 
 	$(ECHO) "############################## Generating... scanner"
-	$(CD) "$(FLEX_SRC_DIR)" && flex fb1-1.l
+	$(CD) "$(FLEX_SRC_DIR)" && flex scanner.l
 	$(ECHO)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
@@ -60,10 +64,12 @@ $(OBJ_DIR)/%.opp: $(SRC_DIR)/%.cpp
 	$(CXX) -c $(CXXFLAGS) -I$(INC_DIR) -o $@ $<
 	$(ECHO)
 
-fb: grammar lexical $(FLEXBISON_OBJS) $(OBJS)
+#fb: grammar lexical $(FLEXBISON_OBJS) $(OBJS)
+fb: lexical $(FLEXBISON_OBJS) $(OBJS)	
 	$(ECHO) "############################## Linking... $@"
 #	$(CC) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CFLAGS) -ll
-	$(CXX) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CXXFLAGS) -ll
+#	$(CXX) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CXXFLAGS) -ll
+	$(CXX) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CXXFLAGS)
 #	$(MAKE) test
 
 test: $(MAKE_DIR)/$(BIN_DIR)/fb
@@ -84,11 +90,9 @@ enter: test/$@
 	@test/$@
 	$(ECHO)
 
-.PHONY: clean
-
 clean:
 	$(ECHO) "############################## cleaning lexcial output files..."
-	$(RM) "$(FLEX_SRC_DIR)/fb1-1.cpp" "$(FLEX_SRC_DIR)/fb1-1.h" "$(FLEX_SRC_DIR)/fb1-1.output"
+	$(RM) "$(FLEX_SRC_DIR)/scanner.cpp" "$(FLEX_SRC_DIR)/scanner.h" "$(FLEX_SRC_DIR)/scanner.output"
 
 	$(ECHO) "############################## cleaning grammar output files..."
 #	$(RM) "$(BISON_SRC_DIR)/addb_parser.cpp" "$(BISON_SRC_DIR)/addb_parser.h" "$(BISON_SRC_DIR)/addb_parser.output"
