@@ -68,8 +68,8 @@ $(OBJ_DIR)/%.opp: $(SRC_DIR)/%.cpp
 fb: lexical $(FLEXBISON_OBJS) $(OBJS)	
 	$(ECHO) "############################## Linking... $@"
 #	$(CC) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CFLAGS) -ll
-#	$(CXX) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CXXFLAGS) -ll
-	$(CXX) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CXXFLAGS)
+	$(CXX) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CXXFLAGS) -ll
+#	$(CXX) -o $(BIN_DIR)/$@ $(MAIN_SRC) $(FLEXBISON_OBJS) $(OBJS) $(CXXFLAGS)
 #	$(MAKE) test
 
 test: $(MAKE_DIR)/$(BIN_DIR)/fb
