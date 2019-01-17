@@ -1,0 +1,5 @@
+The only differences from Example 1-1 are in the code in the third section. 
+
+The main routine opens a filename passed on the command line, if the user specified one, and assigns the FILE to yyin. 
+
+Otherwise, yyin is left unset, in which case yylex automatically sets it to stdin.
