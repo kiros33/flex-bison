@@ -17,11 +17,6 @@
    64비트만 빌드됨
 */
 
-%option noyywrap
-%x IFILE
-
-%{
-
 /*
 Visual Studio 에서 fopen_s 관련 오류를 해결하는 방법 1
 #ifdef _MSC_VER
@@ -35,7 +30,26 @@ Visual Studio 에서 fopen_s 관련 오류를 해결하는 방법 2
 
   FILE *f;
   fopen_s(f, fn, "r");
+
+한글 주석같은 문자가 포함된 경우 경고가 표시되는데 경고를 무시
+#pragma warning(disable: 4819)
+
 */
+
+%option noyywrap
+%x IFILE
+
+%top{
+
+#pragma warning(disable: 4819)
+
+#ifdef _MSC_VER
+  #define _CRT_SECURE_NO_WARNINGS
+#endif
+
+}
+
+%{
 
 #ifdef _MSC_VER
   #define _CRT_SECURE_NO_WARNINGS
