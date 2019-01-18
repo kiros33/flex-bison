@@ -32,6 +32,9 @@ Visual Studio 에서 fopen_s 관련 오류를 해결하는 방법 2
 #ifndef _MSC_VER
   #define fopen_s(fp, fmt, mode) *(fp)=fopen((fmt), (mode))
 #endif
+
+  FILE *f;
+  fopen_s(f, fn, "r");
 */
 
 #ifdef _MSC_VER
@@ -107,8 +110,8 @@ int main(int argc, char **argv) {
 }
 
 int newfile(char *fn) {
-  FILE *f;
-  fopen_s(f, fn, "r");
+  FILE *f = fopen(fn, "r");
+
   struct bufstack *bs = (struct bufstack *)malloc(sizeof(struct bufstack));
 
   /* die if no file or no room */
