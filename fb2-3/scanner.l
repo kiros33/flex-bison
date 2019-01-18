@@ -21,7 +21,23 @@
 %x IFILE
 
 %{
-  
+
+/*
+Visual Studio 에서 fopen_s 관련 오류를 해결하는 방법 1
+#ifdef _MSC_VER
+  #define _CRT_SECURE_NO_WARNINGS
+#endif
+
+Visual Studio 에서 fopen_s 관련 오류를 해결하는 방법 2
+#ifndef _MSC_VER
+  #define fopen_s(fp, fmt, mode) *(fp)=fopen((fmt), (mode))
+#endif
+*/
+
+#ifdef _MSC_VER
+  #define _CRT_SECURE_NO_WARNINGS
+#endif
+
   struct bufstack
   {
     struct bufstack *prev;    /* previous entry */
@@ -91,7 +107,8 @@ int main(int argc, char **argv) {
 }
 
 int newfile(char *fn) {
-  FILE *f = fopen(fn, "r");
+  FILE *f;
+  fopen_s(f, fn, "r");
   struct bufstack *bs = (struct bufstack *)malloc(sizeof(struct bufstack));
 
   /* die if no file or no room */
