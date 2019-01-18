@@ -1,3 +1,8 @@
+/*
+  Example 1-3. A simple flex scanner fb1-3.l
+  recognize tokens for the calculator and print them out
+*/
+
 /* generate header file */
 %option header-file = "scanner.h"
 

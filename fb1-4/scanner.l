@@ -1,3 +1,8 @@
+/*
+  Example 1-4. Calculator scanner fb1-4.l
+  recognize tokens for the calculator and print them out
+*/
+
 /* generate header file */
 %option header-file = "scanner.h"
 

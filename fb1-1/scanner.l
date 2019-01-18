@@ -1,3 +1,8 @@
+/*
+  Example 1-1. Word count fb1-1.l
+  just like Unix wc
+*/
+
 /* generate header file */
 %option header-file = "scanner.h"
 

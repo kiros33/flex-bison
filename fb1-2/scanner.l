@@ -1,3 +1,8 @@
+/*
+  Example 1-2. English to American fb1-2.l
+  English -> American
+*/
+
 /* generate header file */
 %option header-file = "scanner.h"
 

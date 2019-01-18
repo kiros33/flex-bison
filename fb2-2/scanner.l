@@ -1,3 +1,8 @@
+/*
+  Example 2-2. Word count, reading many files fb2-2.l
+  fb2-2 read several files
+*/
+
 /* generate header file */
 %option header-file = "scanner.h"
 

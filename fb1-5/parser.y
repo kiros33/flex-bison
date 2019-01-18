@@ -1,3 +1,7 @@
+/*
+  Example 1-6. Calculator scanner fb1-5.y
+*/
+
 /* generate header file */
 %defines "parser.h"
 
