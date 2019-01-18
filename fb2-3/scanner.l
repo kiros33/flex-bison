@@ -62,7 +62,15 @@
 }
 
   /* pop the file stack at end of file, terminate if it's the outermost file */
-<<EOF>> { if(!popfile()) yyterminate(); }
+<<EOF>> { 
+  if(!popfile()) {
+    yyterminate();
+  }
+  else {
+    // add newline when files are remain
+    fprintf(yyout, "\n");
+  }
+}
 
   /* print the line number at the beginning of each line
      and bump the line number each time a \n is read */
