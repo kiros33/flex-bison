@@ -1,4 +1,4 @@
-# Build results
+# Visual Studio build results
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -12,3 +12,6 @@ bld/
 
 # Visual Studio cache/options directory
 .vs/
+
+# Subversion Cache
+**/.svn
