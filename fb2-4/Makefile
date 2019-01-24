@@ -7,6 +7,14 @@ ECHO = @echo
 CD = cd
 RM = rm -rf
 
+ifeq ($(DEBUG_FLAG), 1)
+CFLAGS += -g
+CXXFLAGS += -g
+$(info >>> DEBUG_FLAG is set 1)
+else
+$(info >>> DEBUG_FLAG is not 1)
+endif
+
 #SRC_DIR = src
 #OBJ_DIR = obj
 #BIN_DIR = bin
@@ -47,6 +55,12 @@ all:
 	$(info # Build all)
 	$(info ##############################)
 	$(MAKE) $(EXEC_NAME)
+
+debug:
+	$(info ##############################)
+	$(info # Build all for debugging)
+	$(info ##############################)
+	DEBUG_FLAG=1 $(MAKE) $(EXEC_NAME)
 
 parser.cpp: parser.y
 	$(ECHO) "############################## Generating... parser"

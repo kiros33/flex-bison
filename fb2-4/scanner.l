@@ -89,6 +89,7 @@ a |
   in |
   is |
   it |
+  not |
   of |
   on |
   or |
@@ -100,7 +101,7 @@ a |
 .|\n                { /* ignore everything else */ }
 %%
 
-int nnew, nold;
+int nnew, nold, ndup;
 int nprobe;
 
 /* concordance main routine */
@@ -127,45 +128,72 @@ int main(int argc, char **argv) {
       fclose(f);
     }
 
-  printf("old = %d, new = %d, total = %d, probes = %d, avg = %1.2f\n", nold,
-         nnew, nold + nnew, nprobe, (float)nprobe / (nold + nnew));
-
   printrefs();
+
+  printf("\n");
+  printf("old = %d, new = %d, dup = %d, total = %d, probes = %d, avg = %1.2f\n", nold,
+         nnew, ndup, nold + nnew, nprobe, (float)nprobe / (nold + nnew));
 
   return 0;
 }
 
 /* hash a symbol */
 static unsigned int symhash(char *sym) {
+  //printf("*** %-10s symbol=%s", "symhash", sym);
   unsigned int hash = 0;
   unsigned c;
 
-  while ((c = *sym++)) hash = hash * 9 ^ c;
+  while ((c = *sym++)) {
+    //printf(" hash=%u", hash);
+    hash = hash * 9 ^ c;
+  }
+
+  //printf(" hash=%u\n", hash);
 
   return hash;
 }
 
 struct symbol *lookup(char *sym) {
+  //printf("*** %-10s symbol=%s\n", "lookup", sym);
+  //printf("*** %-10s symbol=%s hash=%u\n", "lookup", sym, (symhash(sym) % NHASH));
+  
   struct symbol *sp = &symtab[symhash(sym) % NHASH];
   int scount = NHASH; /* how many have we looked at */
 
   while (--scount >= 0) {
-    if (sp->name && !strcmp(sp->name, sym)) return sp;
+    //printf("*** %-10s scount=%d\n", "lookup", scount);
+    nprobe++;
+    if (sp->name && !strcmp(sp->name, sym)) { 
+      printf("*** %-10s symbol '%s' exist\n", "lookup", sym);
+      nold++; return sp;
+    }
 
     if (!sp->name) {
+      printf("*** %-10s symbol '%s' define\n", "lookup", sym);
+      nnew++;
       sp->name = strdup(sym);
       sp->reflist = 0;
       return sp;
     }
 
+    printf("--> %-10s '%s' already defined, try next entry\n", "lookup", sp->name);
+
     /* new entry */
-    if (++sp >= symtab + NHASH) sp = symtab; /* try the next entry */
+    //printf("--> %-10s symbol address is %d and base address is %d ~ %d\n", "lookup", sp, symtab, (symtab + NHASH));
+    if (++sp >= symtab + NHASH) { sp = symtab; } /* try the next entry */
+    //printf("--> %-10s new symbol address is %d\n", "lookup", sp);
+
+    ndup++;
   }
+
   fputs("symbol table overflow\n", stderr);
   abort(); /* tried them all, table is full */
 }
 
 void addref(int lineno, char *filename, char *word, int flags) {
+  printf("**********\n");
+  printf("*** %-10s line=%d, filename=%s, word=%s, flags=%d\n", "addref", lineno, filename, word, flags);
+
   struct ref *r;
   struct symbol *sp = lookup(word);
 
@@ -233,9 +261,9 @@ void printrefs() {
     printf("%-10s", sp->name);
     for (rp = rpp; rp; rp = rp->next) {
       if (rp->filename == prevfn) {
-        printf(" %d", rp->lineno);
+        printf(" → %d", rp->lineno);
       } else {
-        printf(" %-20s:%4d", rp->filename, rp->lineno);
+        printf(" → %s:%d", rp->filename, rp->lineno);
         prevfn = rp->filename;
       }
     }
