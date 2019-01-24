@@ -1,5 +1,5 @@
 /*
-  Example 2-4. Concordance generator
+  Example 2-4. Concordance generator fb2-4.l
   fb2-4 text concordance
 */
 
