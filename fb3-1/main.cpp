@@ -37,30 +37,14 @@ double eval(struct ast *a) {
   double v; /* calculated value of this subtree */
 
   switch (a->nodetype) {
-    case 'K':
-      v = ((struct numval *)a)->number;
-      break;
-    case '+':
-      v = eval(a->l) + eval(a->r);
-      break;
-    case '-':
-      v = eval(a->l) - eval(a->r);
-      break;
-    case '*':
-      v = eval(a->l) * eval(a->r);
-      break;
-    case '/':
-      v = eval(a->l) / eval(a->r);
-      break;
-    case '|':
-      v = eval(a->l);
-      if (v < 0) v = -v;
-      break;
-    case 'M':
-      v = -eval(a->l);
-      break;
-    default:
-      printf("internal error: bad node %c\n", a->nodetype);
+    case 'K': v = ((struct numval *)a)->number; break;
+    case '+': v = eval(a->l) + eval(a->r); break;
+    case '-': v = eval(a->l) - eval(a->r); break;
+    case '*': v = eval(a->l) * eval(a->r); break;
+    case '/': v = eval(a->l) / eval(a->r); break;
+    case '|': v = eval(a->l); if (v < 0) v = -v; break;
+    case 'M': v = -eval(a->l); break;
+    default: printf("internal error: bad node %c\n", a->nodetype);
   }
   return v;
 }
@@ -73,10 +57,12 @@ void treefree(struct ast *a) {
     case '*':
     case '/':
       treefree(a->r);
+
     /* one subtree */
     case '|':
     case 'M':
       treefree(a->l);
+      
     /* no subtree */
     case 'K':
       free(a);
