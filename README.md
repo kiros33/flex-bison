@@ -1,8 +1,14 @@
 # flex & bison
 
+[Book on O'Reilly](http://shop.oreilly.com/product/9780596155988.do)
+![flex & bison](https://user-images.githubusercontent.com/1563133/52050641-8a77b800-2594-11e9-89f3-6499281be157.gif)
 [flexbison.zip](https://github.com/kiros33/flex-bison/files/2817025/flexbison.zip)
 
-![flex & bison](https://user-images.githubusercontent.com/1563133/52050641-8a77b800-2594-11e9-89f3-6499281be157.gif)
+### Source code for macOS and Windows
+* macOS(Terminal)
+  > install flex and bison via brew
+* Windows(Visual Studio 2015 Community)
+  > winflex/winbison
 
 ### Versions on books
 
