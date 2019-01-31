@@ -1,6 +1,6 @@
 # flex & bison
 
-[flexbison.zip](/files/47) 
+[flexbison.zip](https://github.com/kiros33/flex-bison/files/2817025/flexbison.zip)
 
 ![flex & bison](https://user-images.githubusercontent.com/1563133/52050641-8a77b800-2594-11e9-89f3-6499281be157.gif)
 
@@ -30,7 +30,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
 ### files
-Source files: [flexbison.zip](/files/47) 
+Source files: [flexbison.zip](https://github.com/kiros33/flex-bison/files/2817025/flexbison.zip)
 
 flexbison.zip
 ```text
