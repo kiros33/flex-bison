@@ -17,3 +17,4 @@ let avg(a,b)=(a+b)/2;
 sq(10)
 sqrt(10)
 sq(10)-sqrt(10) /* accurate to better than the .001 cutoff */
+
