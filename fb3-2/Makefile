@@ -7,6 +7,8 @@ LFLAGS +=
 ECHO = @echo
 CD = $(ECHOFLAG)cd
 RM = $(ECHOFLAG)rm -rf
+BISON_BIN = /usr/local/opt/bison/bin/bison
+FLEX_BIN = /usr/local/opt/flex/bin/flex
 
 ifeq ($(DEBUG_FLAG), 1)
 CFLAGS += -g
@@ -45,6 +47,7 @@ OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_OBJS))
 EXEC_NAME = fb
 EXEC_TARGET = $(MAKE_DIR)/$(BIN_DIR)/$(EXEC_NAME)
 
+.DEFAULT_GOAL := all
 
 .PHONY: clean test test0 test1 all
 
@@ -64,11 +67,11 @@ debug:
 
 parser.cpp: parser.y
 	$(ECHO) "############################## Generating... parser"
-	$(CD) "$(BISON_SRC_DIR)" && bison $<
+	$(CD) "$(BISON_SRC_DIR)" && $(BISON_BIN) $<
 
 scanner.cpp: scanner.l
 	$(ECHO) "############################## Generating... scanner"
-	$(CD) "$(FLEX_SRC_DIR)" && flex $<
+	$(CD) "$(FLEX_SRC_DIR)" && $(FLEX_BIN) $<
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(ECHO) "############################## Compiling... $<"
