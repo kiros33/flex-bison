@@ -6,6 +6,8 @@ find_package(BISON 3.0.5)
 find_package(FLEX 2.6.4)
 
 set(TARGET fb)
+set(TESTFILE1 test.txt)
+set(TESTFILE2 input.txt)
 
 add_definitions(-D_DEBUG)
 
@@ -18,8 +20,19 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_executable(${TARGET} ${BISON_DefaultParser_OUTPUTS} ${FLEX_DefaultScanner_OUTPUTS} main.cpp)
 
 add_custom_target (test
+  DEPENDS test0
+)
+
+add_custom_target (test0
   COMMAND ${TARGET}
   DEPENDS ${TARGET}
   WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
   COMMENT "execute ${TARGET} for test"
+)
+
+add_custom_target (test1
+  COMMAND ${TARGET} ${TESTFILE1}
+  DEPENDS ${TARGET}
+  WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+  COMMENT "execute ${TARGET} with ${TESTFILE1} for test"
 )
