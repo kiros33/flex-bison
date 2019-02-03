@@ -13,6 +13,8 @@
 
 %option noyywrap nodefault yylineno
 
+%x COMMENT
+
 %top{
 
 #pragma warning(disable: 4819)
@@ -78,6 +80,13 @@ EXP ([Ee][-+]?[0-9]+)
 
 [0-9]+"."[0-9]*{EXP}? |
 "."?[0-9]+{EXP}? { yylval.d = atof(yytext); return NUMBER; }
+
+
+  /* comments */
+"/*"                        { BEGIN(COMMENT); /* debug_console("==> start comments\n"); */ }
+<COMMENT>"*/"               { BEGIN(INITIAL); /* debug_console("==> end comments\n"); */ }
+<COMMENT>([^*]|\n|\*[^/])+  { /* ignore */ }
+<COMMENT><<EOF>>            { debug_console("==> %d: Unterminated comment\n", yylineno); return 0; }
 
 "//".*
 
