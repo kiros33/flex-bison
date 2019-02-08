@@ -12,27 +12,38 @@ extern bool debug_flag;
 extern int yylineno; /* from lexer */
 void yyerror(const char *s, ...);
 
+typedef struct _ast AbstractSyntaxTree, *pAbstractSyntaxTree;
+typedef struct _symbol Symbol, *pSymbol;
+typedef struct _symlist SymbolList, *pSymbolList;
+
+typedef struct _fncall IntrinsicFunction, *pIntrinsicFunction;
+typedef struct _ufncall UserFunction, *pUserFunction;
+typedef struct _flow FlowControl, *pFlowControl;
+typedef struct _numval NumberValue, *pNumberValue;
+typedef struct _symref SymbolRef, *pSymbolRef;
+typedef struct _symasgn SymbolAssign, *pSymbolAssign;
+
 /* symbol table */
-struct symbol {
+struct _symbol {
   char *name;                         /* a variable name */
   double value;
-  struct ast *func;                   /* stmt for the function */
-  struct symlist *syms;               /* list of dummy args */
+  pAbstractSyntaxTree func;                   /* stmt for the function */
+  pSymbolList syms;               /* list of dummy args */
 };
 
 /* simple symtab of fixed size */
 #define NHASH 9997
 
-struct symbol *lookup(char *);
+pSymbol lookup(char *);
 
 /* list of symbols, for an argument list */
-struct symlist {
-  struct symbol *sym;
-  struct symlist *next;
+struct _symlist {
+  pSymbol sym;
+  pSymbolList next;
 };
 
-struct symlist *newsymlist(struct symbol *sym, struct symlist *next);
-void symlistfree(struct symlist *sl);
+pSymbolList newsymlist(pSymbol sym, pSymbolList next);
+void symlistfree(pSymbolList sl);
 
 /* node types
  * + - * / |
@@ -54,66 +65,66 @@ enum bifs { B_sqrt = 1, B_exp, B_log, B_print };
 /* nodes in the abstract syntax tree */
 /* all have common initial nodetype */
 
-struct ast {
+struct _ast {
   int nodetype;
-  struct ast *l;
-  struct ast *r;
+  pAbstractSyntaxTree l;
+  pAbstractSyntaxTree r;
 };
 
 /* built-in function */
-struct fncall {
+struct _fncall {
   int nodetype; /* type F */
-  struct ast *l;
+  pAbstractSyntaxTree l;
   enum bifs functype;
 };
 
 /* user function */
-struct ufncall {
+struct _ufncall {
   int nodetype;  /* type C */
-  struct ast *l; /* list of arguments */
-  struct symbol *s;
+  pAbstractSyntaxTree l; /* list of arguments */
+  pSymbol s;
 };
 
-struct flow {
+struct _flow {
   int nodetype;     /* type I or W */
-  struct ast *cond; /* condition */
-  struct ast *tl;   /* then branch or do list */
-  struct ast *el;   /* optional else branch */
+  pAbstractSyntaxTree cond; /* condition */
+  pAbstractSyntaxTree tl;   /* then branch or do list */
+  pAbstractSyntaxTree el;   /* optional else branch */
 };
 
-struct numval {
+struct _numval {
   int nodetype; /* type K */
   double number;
 };
 
-struct symref {
+struct _symref {
   int nodetype; /* type N */
-  struct symbol *s;
+  pSymbol s;
 };
 
-struct symasgn {
+struct _symasgn {
   int nodetype; /* type = */
-  struct symbol *s;
-  struct ast *v; /* value */
+  pSymbol s;
+  pAbstractSyntaxTree v; /* value */
 };
 
 /* build an AST */
-struct ast *newast(int nodetype, struct ast *l, struct ast *r);
-struct ast *newcmp(int cmptype, struct ast *l, struct ast *r);
-struct ast *newfunc(int functype, struct ast *l);
-struct ast *newcall(struct symbol *s, struct ast *l);
-struct ast *newref(struct symbol *s);
-struct ast *newasgn(struct symbol *s, struct ast *v);
-struct ast *newnum(double d);
-struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
+pAbstractSyntaxTree newast(int nodetype, pAbstractSyntaxTree l, pAbstractSyntaxTree r);
+pAbstractSyntaxTree newcmp(int cmptype, pAbstractSyntaxTree l, pAbstractSyntaxTree r);
+pAbstractSyntaxTree newfunc(int functype, pAbstractSyntaxTree l);
+pAbstractSyntaxTree newcall(pSymbol s, pAbstractSyntaxTree l);
+pAbstractSyntaxTree newref(pSymbol s);
+pAbstractSyntaxTree newasgn(pSymbol s, pAbstractSyntaxTree v);
+pAbstractSyntaxTree newnum(double d);
+pAbstractSyntaxTree newflow(int nodetype, pAbstractSyntaxTree cond, pAbstractSyntaxTree tl, pAbstractSyntaxTree tr);
 
 /* define a function */ 
-void dodef(struct symbol *name, struct symlist *syms, struct ast *stmts);
+void dodef(pSymbol name, pSymbolList syms, pAbstractSyntaxTree stmts);
 
 /* evaluate an AST */ 
-double eval(struct ast *);
+double eval(pAbstractSyntaxTree );
 
 /* delete and free an AST */ 
-void treefree(struct ast *);
+void treefree(pAbstractSyntaxTree );
 
 #endif

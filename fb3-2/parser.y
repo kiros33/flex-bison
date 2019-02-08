@@ -18,10 +18,10 @@
 %}
 
 %union { 
-  struct ast *a;
+  pAbstractSyntaxTree a;
   double d;
-  struct symbol *s; /* which symbol */
-  struct symlist *sl;
+  pSymbol s; /* which symbol */
+  pSymbolList sl;
   int fn; /* which function */
 }
 

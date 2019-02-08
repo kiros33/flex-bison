@@ -26,7 +26,7 @@ int debug_console(const char *format, ...) {
   return done;
 }
 
-struct symbol symtab[NHASH];
+Symbol symtab[NHASH];
 
 /* symbol table */
 /* hash a symbol */
@@ -41,8 +41,8 @@ static unsigned int symhash(char *sym) {
   return hash;
 }
 
-struct symbol *lookup(char *sym) {
-  struct symbol *sp = &symtab[symhash(sym) % NHASH];
+pSymbol lookup(char *sym) {
+  pSymbol sp = &symtab[symhash(sym) % NHASH];
   int scount = NHASH; /* how many have we looked at */
 
   while (--scount >= 0) {
@@ -62,8 +62,8 @@ struct symbol *lookup(char *sym) {
   abort(); /* tried them all, table is full */
 }
 
-struct ast *newast(int nodetype, struct ast *l, struct ast *r) {
-  struct ast *a = (struct ast *)malloc(sizeof(struct ast));
+pAbstractSyntaxTree newast(int nodetype, pAbstractSyntaxTree l, pAbstractSyntaxTree r) {
+  pAbstractSyntaxTree a = (pAbstractSyntaxTree)malloc(sizeof(AbstractSyntaxTree));
 
   if (!a) {
     yyerror("out of space");
@@ -77,8 +77,8 @@ struct ast *newast(int nodetype, struct ast *l, struct ast *r) {
   return a;
 }
 
-struct ast *newnum(double d) {
-  struct numval *a = (struct numval *)malloc(sizeof(struct numval));
+pAbstractSyntaxTree newnum(double d) {
+  pNumberValue a = (pNumberValue)malloc(sizeof(NumberValue));
 
   if (!a) {
     yyerror("out of space");
@@ -88,11 +88,11 @@ struct ast *newnum(double d) {
   a->nodetype = 'K';
   a->number = d;
 
-  return (struct ast *)a;
+  return (pAbstractSyntaxTree )a;
 }
 
-struct ast *newcmp(int cmptype, struct ast *l, struct ast *r) {
-  struct ast *a = (struct ast *)malloc(sizeof(struct ast));
+pAbstractSyntaxTree newcmp(int cmptype, pAbstractSyntaxTree l, pAbstractSyntaxTree r) {
+  pAbstractSyntaxTree a = (pAbstractSyntaxTree)malloc(sizeof(AbstractSyntaxTree));
 
   if (!a) {
     yyerror("out of space");
@@ -106,8 +106,8 @@ struct ast *newcmp(int cmptype, struct ast *l, struct ast *r) {
   return a;
 }
 
-struct ast *newfunc(int functype, struct ast *l) {
-  struct fncall *a = (struct fncall *)malloc(sizeof(struct fncall));
+pAbstractSyntaxTree newfunc(int functype, pAbstractSyntaxTree l) {
+  pIntrinsicFunction a = (pIntrinsicFunction)malloc(sizeof(IntrinsicFunction));
 
   if (!a) {
     yyerror("out of space");
@@ -118,11 +118,11 @@ struct ast *newfunc(int functype, struct ast *l) {
   a->l = l;
   a->functype = static_cast<bifs>(functype);
 
-  return (struct ast *)a;
+  return (pAbstractSyntaxTree )a;
 }
 
-struct ast *newcall(struct symbol *s, struct ast *l) {
-  struct ufncall *a = (struct ufncall *)malloc(sizeof(struct ufncall));
+pAbstractSyntaxTree newcall(pSymbol s, pAbstractSyntaxTree l) {
+  pUserFunction a = (pUserFunction)malloc(sizeof(UserFunction));
 
   if (!a) {
     yyerror("out of space");
@@ -133,11 +133,11 @@ struct ast *newcall(struct symbol *s, struct ast *l) {
   a->l = l;
   a->s = s;
 
-  return (struct ast *)a;
+  return (pAbstractSyntaxTree )a;
 }
 
-struct ast *newref(struct symbol *s) {
-  struct symref *a = (struct symref *)malloc(sizeof(struct symref));
+pAbstractSyntaxTree newref(pSymbol s) {
+  pSymbolRef a = (pSymbolRef)malloc(sizeof(SymbolRef));
 
   if (!a) {
     yyerror("out of space");
@@ -147,11 +147,11 @@ struct ast *newref(struct symbol *s) {
   a->nodetype = 'N';
   a->s = s;
 
-  return (struct ast *)a;
+  return (pAbstractSyntaxTree )a;
 }
 
-struct ast *newasgn(struct symbol *s, struct ast *v) {
-  struct symasgn *a = (struct symasgn *)malloc(sizeof(struct symasgn));
+pAbstractSyntaxTree newasgn(pSymbol s, pAbstractSyntaxTree v) {
+  pSymbolAssign a = (pSymbolAssign)malloc(sizeof(SymbolAssign));
 
   if (!a) {
     yyerror("out of space");
@@ -162,12 +162,12 @@ struct ast *newasgn(struct symbol *s, struct ast *v) {
   a->s = s;
   a->v = v;
 
-  return (struct ast *)a;
+  return (pAbstractSyntaxTree )a;
 }
 
-struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl,
-                    struct ast *el) {
-  struct flow *a = (struct flow *)malloc(sizeof(struct flow));
+pAbstractSyntaxTree newflow(int nodetype, pAbstractSyntaxTree cond, pAbstractSyntaxTree tl,
+                    pAbstractSyntaxTree el) {
+  pFlowControl a = (pFlowControl)malloc(sizeof(FlowControl));
 
   if (!a) {
     yyerror("out of space");
@@ -179,11 +179,11 @@ struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl,
   a->tl = tl;
   a->el = el;
 
-  return (struct ast *)a;
+  return (pAbstractSyntaxTree )a;
 }
 
 /* free a tree of ASTs */
-void treefree(struct ast *a) {
+void treefree(pAbstractSyntaxTree a) {
   switch (a->nodetype) {
     /* two subtrees */
     case '+':
@@ -204,14 +204,14 @@ void treefree(struct ast *a) {
       break;
 
     case '=':
-      free(((struct symasgn *)a)->v);
+      free(((pSymbolAssign)a)->v);
       break;
 
     /* up to three subtrees */
     case 'I': case 'W':
-      free(((struct flow *)a)->cond);
-      if (((struct flow *)a)->tl) treefree(((struct flow *)a)->tl);
-      if (((struct flow *)a)->el) treefree(((struct flow *)a)->el);
+      free(((pFlowControl)a)->cond);
+      if (((pFlowControl)a)->tl) treefree(((pFlowControl)a)->tl);
+      if (((pFlowControl)a)->el) treefree(((pFlowControl)a)->el);
       break;
 
     default:
@@ -221,8 +221,8 @@ void treefree(struct ast *a) {
   free(a); /* always free the node itself */
 }
 
-struct symlist *newsymlist(struct symbol *sym, struct symlist *next) {
-  struct symlist *sl = (struct symlist *)malloc(sizeof(struct symlist));
+pSymbolList newsymlist(pSymbol sym, pSymbolList next) {
+  pSymbolList sl = (pSymbolList)malloc(sizeof(SymbolList));
 
   if (!sl) {
     yyerror("out of space");
@@ -236,8 +236,8 @@ struct symlist *newsymlist(struct symbol *sym, struct symlist *next) {
 }
 
 /* free a list of symbols */
-void symlistfree(struct symlist *sl) {
-  struct symlist *nsl;
+void symlistfree(pSymbolList sl) {
+  pSymbolList nsl;
 
   while (sl) {
     nsl = sl->next;
@@ -246,10 +246,10 @@ void symlistfree(struct symlist *sl) {
   }
 }
 
-static double callbuiltin(struct fncall *); 
-static double calluser(struct ufncall *);
+static double callbuiltin(pIntrinsicFunction); 
+static double calluser(pUserFunction);
 
-double eval(struct ast *a) {
+double eval(pAbstractSyntaxTree a) {
   double v; /* calculated value of this subtree */
 
   if (!a) {
@@ -259,13 +259,13 @@ double eval(struct ast *a) {
 
   switch (a->nodetype) {
     /* constant */
-    case 'K': v = ((struct numval *)a)->number; break;
+    case 'K': v = ((pNumberValue)a)->number; break;
 
       /* name reference */
-    case 'N': v = ((struct symref *)a)->s->value; break;
+    case 'N': v = ((pSymbolRef)a)->s->value; break;
 
     /* assignment */
-    case '=': v = ((struct symasgn *)a)->s->value = eval(((struct symasgn *)a)->v); break;
+    case '=': v = ((pSymbolAssign)a)->s->value = eval(((pSymbolAssign)a)->v); break;
 
       /* expressions */
     case '+': v = eval(a->l) + eval(a->r); break;
@@ -288,16 +288,16 @@ double eval(struct ast *a) {
 
     /* if/then/else */
     case 'I':
-      if (eval(((struct flow *)a)->cond) != 0) { /* check the condition */
-        if (((struct flow *)a)->tl) { /* the true branch */
-          v = eval(((struct flow *)a)->tl);
+      if (eval(((pFlowControl)a)->cond) != 0) { /* check the condition */
+        if (((pFlowControl)a)->tl) { /* the true branch */
+          v = eval(((pFlowControl)a)->tl);
         }
         else {
           v = 0.0; /* a default value */
         }
       } else {
-        if (((struct flow *)a)->el) { /* the false branch */
-          v = eval(((struct flow *)a)->el);
+        if (((pFlowControl)a)->el) { /* the false branch */
+          v = eval(((pFlowControl)a)->el);
         } else {
           v = 0.0; /* a default value */
         }
@@ -308,24 +308,24 @@ double eval(struct ast *a) {
     case 'W':
       v = 0.0; /* a default value */
 
-      if (((struct flow *)a)->tl) {
-        while (eval(((struct flow *)a)->cond) != 0) { /* evaluate the condition */
-          v = eval(((struct flow *)a)->tl); /* evaluate the target statements */
+      if (((pFlowControl)a)->tl) {
+        while (eval(((pFlowControl)a)->cond) != 0) { /* evaluate the condition */
+          v = eval(((pFlowControl)a)->tl); /* evaluate the target statements */
         }
       }
       break; /* value of last statement is value of while/do */
     
     /* list of statements */
     case 'L': eval(a->l); v = eval(a->r); break;
-    case 'F': v = callbuiltin((struct fncall *)a); break;
-    case 'C': v = calluser((struct ufncall *)a); break;
+    case 'F': v = callbuiltin((pIntrinsicFunction)a); break;
+    case 'C': v = calluser((pUserFunction)a); break;
 
     default: printf("internal error: bad node %c\n", a->nodetype);
   }
   return v;
 }
 
-static double callbuiltin(struct fncall *f) {
+static double callbuiltin(pIntrinsicFunction f) {
   enum bifs functype = f->functype;
   double v = eval(f->l);
 
@@ -342,7 +342,7 @@ static double callbuiltin(struct fncall *f) {
   > let max(x,y) = if x >= y then x; else y;;
   > max(4+5,6+7)
 */
-void dodef(struct symbol *name, struct symlist *syms, struct ast *func) {
+void dodef(pSymbol name, pSymbolList syms, pAbstractSyntaxTree func) {
   if (name->syms) symlistfree(name->syms);
   if (name->func) treefree(name->func);
 
@@ -350,10 +350,10 @@ void dodef(struct symbol *name, struct symlist *syms, struct ast *func) {
   name->func = func;
 }
 
-static double calluser(struct ufncall *f) {
-  struct symbol *fn = f->s;   /* function name */
-  struct symlist *sl;         /* dummy arguments */
-  struct ast *args = f->l;    /* actual arguments */
+static double calluser(pUserFunction f) {
+  pSymbol fn = f->s;   /* function name */
+  pSymbolList sl;         /* dummy arguments */
+  pAbstractSyntaxTree args = f->l;    /* actual arguments */
   double *oldval, *newval;    /* saved arg values */
   double v;
   int nargs;
@@ -398,7 +398,7 @@ static double calluser(struct ufncall *f) {
   /* save old values of dummies, assign new ones */
   sl = fn->syms;
   for (i = 0; i < nargs; i++) {
-    struct symbol *s = sl->sym;
+    pSymbol s = sl->sym;
 
     oldval[i] = s->value;
     s->value = newval[i];
@@ -413,7 +413,7 @@ static double calluser(struct ufncall *f) {
   /* put the real values of the dummies back */
   sl = fn->syms;
   for (i = 0; i < nargs; i++) {
-    struct symbol *s = sl->sym;
+    pSymbol s = sl->sym;
 
     s->value = oldval[i];
     sl = sl->next;
