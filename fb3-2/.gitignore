@@ -21,3 +21,12 @@ bld/
 **/CMakeFiles/
 **/cmake_install.cmake
 **/Makefile
+
+# Flex/Bison intermediate files
+parser.cpp
+parser.h
+scanner.cpp
+scanner.h
+
+# Target file
+fb
