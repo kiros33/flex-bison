@@ -2,8 +2,8 @@ project(fb)
 
 cmake_minimum_required(VERSION 2.8)
 
-find_package(BISON 3.0.5)
-find_package(FLEX 2.6.4)
+find_package(BISON 3.0.4)
+find_package(FLEX 2.5.37)
 
 set( PROJECT_VERSION_MAJOR 1 )
 set( PROJECT_VERSION_MINOR 0 )
