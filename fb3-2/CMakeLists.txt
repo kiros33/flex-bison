@@ -1,6 +1,6 @@
 project(fb)
 
-cmake_minimum_required(VERSION 3.13.4)
+cmake_minimum_required(VERSION 2.8)
 
 find_package(BISON 3.0.5)
 find_package(FLEX 2.6.4)
