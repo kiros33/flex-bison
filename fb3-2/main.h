@@ -7,6 +7,8 @@
 */
 
 extern bool debug_flag;
+extern bool l_debug_flag;
+extern bool y_debug_flag;
 
 /* interface to the lexer */
 extern int yylineno; /* from lexer */

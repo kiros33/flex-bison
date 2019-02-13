@@ -42,6 +42,11 @@ EXP ([Ee][-+]?[0-9]+)
 
 "exit" { yyterminate(); } // exit 기능 추가
 
+  /* environment variables */
+"debug_flag"([ \t]+("on"|"off"))? { if(strstr(yytext + 10, "off")) debug_flag = false; else if (strstr(yytext + 10, "on")) debug_flag = true; l_debug_console("[debug][l][debug_flag][%s]", ((debug_flag) ? "true" : "false")); }
+"l_debug_flag"([ \t]+("on"|"off"))? { if(strstr(yytext + 12, "off")) l_debug_flag = false; else if (strstr(yytext + 12, "on")) l_debug_flag = true; l_debug_console("[debug][l][l_debug_flag][%s]", ((l_debug_flag) ? "true" : "false")); }
+"y_debug_flag"([ \t]+("on"|"off"))? { if(strstr(yytext + 12, "off")) y_debug_flag = false; else if (strstr(yytext + 12, "on")) y_debug_flag = true; l_debug_console("[debug][l][y_debug_flag][%s]", ((y_debug_flag) ? "true" : "false")); }
+
   /* single character ops */
 "+" |
 "-" |
@@ -55,12 +60,12 @@ EXP ([Ee][-+]?[0-9]+)
 ")" { l_debug_console("[debug][l][single char operator][%c][%d]", yytext[0], yytext[0]); return yytext[0]; }
 
   /* comparison ops, all are a CMP token */
-">"  { yylval.fn = 1; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
-"<"  { yylval.fn = 2; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
-"<>" { yylval.fn = 3; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
-"==" { yylval.fn = 4; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
-">=" { yylval.fn = 5; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
-"<=" { yylval.fn = 6; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
+">"  { yylval.fn = 1; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
+"<"  { yylval.fn = 2; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
+"<>" { yylval.fn = 3; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
+"==" { yylval.fn = 4; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
+">=" { yylval.fn = 5; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
+"<=" { yylval.fn = 6; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
 
   /* keywords */
 "if"    { l_debug_console("[debug][l][IF]");     return IF; }
@@ -77,7 +82,7 @@ EXP ([Ee][-+]?[0-9]+)
 "print" { yylval.fn = B_print; l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval.fn); return FUNC; }
 
   /* names */
-[a-zA-Z][a-zA-Z0-9]* { yylval.s = lookup(yytext); l_debug_console("[debug][l][NAME][%s][%f]", yytext, yylval.s->value); return NAME; }
+[a-zA-Z][a-zA-Z0-9_-]* { yylval.s = lookup(yytext); l_debug_console("[debug][l][NAME][%s][%f]", yytext, yylval.s->value); return NAME; }
 
 [0-9]+"."[0-9]*{EXP}? |
 "."?[0-9]+{EXP}? { yylval.d = atof(yytext); l_debug_console("[debug][l][NUMBER][%s][%f]", yytext, yylval.d); return NUMBER; }

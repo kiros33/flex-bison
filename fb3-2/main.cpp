@@ -12,8 +12,8 @@
 #include "parser.h"
 
 bool debug_flag = false;
-bool l_debug_flag = true;
-bool y_debug_flag = true;
+bool l_debug_flag = false;
+bool y_debug_flag = false;
 
 int debug_console(const char *format, ...) {
   va_list arg;
@@ -83,6 +83,7 @@ struct symbol *lookup(char *sym) {
       sp->value = 0;
       sp->func = NULL;
       sp->syms = NULL;
+
       return sp;
     }
 

@@ -73,7 +73,14 @@ Defined avg
 ### 테스트용
 
 ```
-if ( a > 2 ) then b = 3; else b = 5; 
+debug_flag on
+l_debug_flag on
+y_debug_flag on
+```
+a = 8
+b = 3
+let fn1(n)=k=1;k=k+log(n);
+if ( sqrt(a) > b ) then c = 3; else c = fn1(5); 
 ```
 
 
