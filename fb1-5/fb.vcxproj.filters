@@ -46,10 +46,8 @@
     <CustomBuild Include="scanner.l">
       <Filter>FlexBison Files</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="parser.y">
+    <CustomBuild Include="parser.y">
       <Filter>FlexBison Files</Filter>
-    </None>
+    </CustomBuild>
   </ItemGroup>
 </Project>
