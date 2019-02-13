@@ -20,6 +20,7 @@
 #pragma warning(disable: 4819)
 
 #ifdef _MSC_VER
+  /* fopen 경고 없애기 */
   #define _CRT_SECURE_NO_WARNINGS
 #endif
 

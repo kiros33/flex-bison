@@ -17,7 +17,7 @@ bool y_debug_flag = false;
 
 int debug_console(const char *format, ...) {
   va_list arg;
-  int done;
+  int done = 0;
 
   if(debug_flag) {
     va_start(arg, format);
@@ -30,7 +30,7 @@ int debug_console(const char *format, ...) {
 
 int l_debug_console(const char *format, ...) {
   va_list arg;
-  int done;
+  int done = 0;
 
   if(l_debug_flag) {
     va_start(arg, format);
@@ -44,7 +44,7 @@ int l_debug_console(const char *format, ...) {
 
 int y_debug_console(const char *format, ...) {
   va_list arg;
-  int done;
+  int done = 0;
 
   if(y_debug_flag) {
     va_start(arg, format);

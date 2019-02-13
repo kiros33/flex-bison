@@ -6,6 +6,11 @@
   Declarations for a calculator fb3-1
 */
 
+#ifdef _MSC_VER
+  /* strdup 경고 없애기 */
+  #define strdup _strdup
+#endif
+
 extern bool debug_flag;
 extern bool l_debug_flag;
 extern bool y_debug_flag;
