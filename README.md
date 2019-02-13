@@ -4,6 +4,23 @@
 ![flex & bison](https://user-images.githubusercontent.com/1563133/52050641-8a77b800-2594-11e9-89f3-6499281be157.gif)  
 [flexbison.zip](https://github.com/kiros33/flex-bison/files/2817025/flexbison.zip)  
 
+### Cross-complie Test
+| Project | macOS | Linux | Windows | Descriptions |
+| :--- | :---: | :---: | :---: | :--- |
+| fb1-1 | O | | ? | |
+| fb1-2 | O | | | |
+| fb1-3 | O | | | |
+| fb1-4 | O | | ? | |
+| fb1-5 | O | | ? | |
+| fb2-1 | O | | | |
+| fb2-2 | O | | | |
+| fb2-3 | O | | O | |
+| fb2-4 | O | | | |
+| fb2-5 | O | | | |
+| fb3-1 | O | | | |
+| fb3-2 | O | | O | cmake 적용 |
+
+
 ### Branch
 
 * typedef: `git checkout -t origin/typedef`
