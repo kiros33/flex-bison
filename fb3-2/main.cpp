@@ -11,7 +11,9 @@
 #include "main.h"
 #include "parser.h"
 
-bool debug_flag = true;
+bool debug_flag = false;
+bool l_debug_flag = true;
+bool y_debug_flag = true;
 
 int debug_console(const char *format, ...) {
   va_list arg;
@@ -20,6 +22,34 @@ int debug_console(const char *format, ...) {
   if(debug_flag) {
     va_start(arg, format);
     done = vfprintf(stdout, format, arg);
+    va_end(arg);
+  }
+
+  return done;
+}
+
+int l_debug_console(const char *format, ...) {
+  va_list arg;
+  int done;
+
+  if(l_debug_flag) {
+    va_start(arg, format);
+    done = vfprintf(stdout, format, arg);
+    printf("\n");
+    va_end(arg);
+  }
+
+  return done;
+}
+
+int y_debug_console(const char *format, ...) {
+  va_list arg;
+  int done;
+
+  if(y_debug_flag) {
+    va_start(arg, format);
+    done = vfprintf(stdout, format, arg);
+    printf("\n");
     va_end(arg);
   }
 

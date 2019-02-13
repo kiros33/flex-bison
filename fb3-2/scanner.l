@@ -25,7 +25,8 @@
 
 #include <stdarg.h>
 
-int debug_console(const char *, ...);
+extern int debug_console(const char *, ...);
+extern int l_debug_console(const char *, ...);
 
 }
 
@@ -51,50 +52,50 @@ EXP ([Ee][-+]?[0-9]+)
 "," |
 ";" |
 "(" |
-")" { return yytext[0]; }
+")" { l_debug_console("[debug][l][single char operator][%c][%d]", yytext[0], yytext[0]); return yytext[0]; }
 
   /* comparison ops, all are a CMP token */
-">"  { yylval.fn = 1; return CMP; }
-"<"  { yylval.fn = 2; return CMP; }
-"<>" { yylval.fn = 3; return CMP; }
-"==" { yylval.fn = 4; return CMP; }
-">=" { yylval.fn = 5; return CMP; }
-"<=" { yylval.fn = 6; return CMP; }
+">"  { yylval.fn = 1; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
+"<"  { yylval.fn = 2; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
+"<>" { yylval.fn = 3; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
+"==" { yylval.fn = 4; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
+">=" { yylval.fn = 5; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
+"<=" { yylval.fn = 6; l_debug_console("[debug][l][CMD][%s][%d]", yytext, yylval.fn); return CMP; }
 
   /* keywords */
-"if"    { return IF; }
-"then"  { return THEN; }
-"else"  { return ELSE; }
-"while" { return WHILE; }
-"do"    { return DO; }
-"let"   { return LET ;}
+"if"    { l_debug_console("[debug][l][IF]");     return IF; }
+"then"  { l_debug_console("[debug][l][THEN]");   return THEN; }
+"else"  { l_debug_console("[debug][l][ELSE]");   return ELSE; }
+"while" { l_debug_console("[debug][l][WHILE]");  return WHILE; }
+"do"    { l_debug_console("[debug][l][DO]");     return DO; }
+"let"   { l_debug_console("[debug][l][LET]");    return LET ;}
 
   /* built-in functions */
-"sqrt"  { yylval.fn = B_sqrt; return FUNC; }
-"exp"   { yylval.fn = B_exp; return FUNC; }
-"log"   { yylval.fn = B_log; return FUNC; }
-"print" { yylval.fn = B_print; return FUNC; }
+"sqrt"  { yylval.fn = B_sqrt;  l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval.fn); return FUNC; }
+"exp"   { yylval.fn = B_exp;   l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval.fn); return FUNC; }
+"log"   { yylval.fn = B_log;   l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval.fn); return FUNC; }
+"print" { yylval.fn = B_print; l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval.fn); return FUNC; }
 
   /* names */
-[a-zA-Z][a-zA-Z0-9]* { yylval.s = lookup(yytext); return NAME; }
+[a-zA-Z][a-zA-Z0-9]* { yylval.s = lookup(yytext); l_debug_console("[debug][l][NAME][%s][%f]", yytext, yylval.s->value); return NAME; }
 
 [0-9]+"."[0-9]*{EXP}? |
-"."?[0-9]+{EXP}? { yylval.d = atof(yytext); return NUMBER; }
+"."?[0-9]+{EXP}? { yylval.d = atof(yytext); l_debug_console("[debug][l][NUMBER][%s][%f]", yytext, yylval.d); return NUMBER; }
 
 
   /* comments */
-"/*"                        { BEGIN(COMMENT); /* debug_console("==> start comments\n"); */ }
-<COMMENT>"*/"               { BEGIN(INITIAL); /* debug_console("==> end comments\n"); */ }
-<COMMENT>([^*]|\n|\*[^/])+  { /* ignore */ }
+"/*"                        { BEGIN(COMMENT); l_debug_console("[debug][l][COMMENT][begin][%s]", yytext); }
+<COMMENT>"*/"               { BEGIN(INITIAL); l_debug_console("[debug][l][COMMENT][end][%s]", yytext); }
+<COMMENT>([^*]|\n|\*[^/])+  { /* ignore */ l_debug_console("[debug][l][COMMENT][contents][%s]", yytext); }
 <COMMENT><<EOF>>            { debug_console("==> %d: Unterminated comment\n", yylineno); return 0; }
 
-"//".*
+"//".* { l_debug_console("[debug][l][COMMENT][inline][%s]", yytext); }
 
 [ \t] { /* ignore whitespace */ }
 
 \\\n { printf("c> "); } /* ignore line continuation */
 
-\n { return EOL; }
+\n { l_debug_console("[debug][l][EOL]"); return EOL; }
 
 . { yyerror("Mystery character %c\n", *yytext); }
 
