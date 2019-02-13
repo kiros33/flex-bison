@@ -30,15 +30,32 @@
     <ClInclude Include="scanner.h">
       <Filter>Generated Files\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="parser.h">
+      <Filter>Generated Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scanner.cpp">
       <Filter>Generated Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parser.cpp">
+      <Filter>Generated Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="scanner.l">
       <Filter>FlexBison Files</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="parser.y">
+      <Filter>FlexBison Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
