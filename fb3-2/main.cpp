@@ -8,6 +8,8 @@
 #include <stdarg.h>
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
+#include <ctype.h>
 #include "main.h"
 #include "parser.h"
 
@@ -458,12 +460,76 @@ static double calluser(struct ufncall *f) {
 void yyerror(const char *s, ...) {
   va_list ap;
   va_start(ap, s);
-  fprintf(stderr, "%d: error: ", yylineno);
+  fprintf(stderr, "%d:%d %s:", yylineno, 0, yytext);
   vfprintf(stderr, s, ap);
   fprintf(stderr, "\n");
 }
 
-int main() {
+/*
+        -w         Suppress warnings.
+        -l         Show library listing during load.
+        -u         Update object(s). *
+        -t         Update object(s) with tracing. *
+        -s         Show structure of loaded object(s). *
+        -o[=]ofile Redirect output to a file.
+        -b[=]bfile Create equivalent binary library. *
+
+        getoptlong
+*/
+
+int main(int argc, char **argv) {
+  int index;
+  int c;
+
+  opterr = 0;
+
+  while ((c = getopt(argc, argv, "wlutso:b:d")) != -1) {
+    debug_console("[debug][main][options][%c]", c);
+    switch (c) {
+      case 'w':
+        break;
+      case 'l':
+        break;
+      case 'u':
+        break;
+      case 't':
+        break;
+      case 's':
+        break;
+      case 'o':
+        debug_console("[%s]", optarg);
+        break;
+      case 'b':
+        //debug_console("[%s]", optarg);
+        break;
+      case 'd':
+        debug_flag = true;
+        l_debug_flag = true;
+        y_debug_flag = true;
+        break;
+      case '?':
+        if (optopt == 'o') {
+          fprintf(stderr, "option -%c requires log filename\n", optopt);
+        } 
+        else if (optopt == 'b') {
+          fprintf(stderr, "option -%c requires binary filename\n", optopt);
+        } else if (isprint(optopt)) {
+          fprintf(stderr, "Unknown option `-%c`\n", optopt);
+        }
+        else {
+          fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+        }
+        return 1;
+      default:
+        abort();
+    }
+    debug_console("\n");
+  }
+
+  for (index = optind; index < argc; index++) {
+    fprintf(stderr, "Not supported option argument %s\n", argv[index]);
+  }
+
   printf("> ");
   return yyparse();
 }

@@ -17,6 +17,7 @@ extern bool y_debug_flag;
 
 /* interface to the lexer */
 extern int yylineno; /* from lexer */
+extern char *yytext; /* from lexer */
 void yyerror(const char *s, ...);
 
 /* symbol table */
