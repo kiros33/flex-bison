@@ -505,7 +505,7 @@ int main(int argc, char **argv) {
         debug_console("[%s option]", "s");
         break;
       case 'o':
-        debug_console("[%s option]+[%s]", "o", optarg);
+        debug_console("[%s option]+[%s]", "logfile output", optarg);
         break;
       case 'b':
         debug_console("[%s option]+[%s]", "binary output", optarg);
@@ -536,8 +536,6 @@ int main(int argc, char **argv) {
     debug_console("\n");
     if(quit_flag > 0) return 1;
   }
-
-  return 1;
 
   for (index = optind; index < argc; index++) {
     fprintf(stderr, "Not supported option argument %s\n", argv[index]);
