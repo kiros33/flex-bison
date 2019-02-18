@@ -8,10 +8,11 @@
 #include <stdarg.h>
 #include <string.h>
 #include <math.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <ctype.h>
 #include "main.h"
 #include "parser.h"
+#include "wingetopt.h"
 
 bool debug_flag = false;
 bool l_debug_flag = false;
@@ -487,27 +488,34 @@ int main(int argc, char **argv) {
     debug_console("[debug][main][options][%c]", c);
     switch (c) {
       case 'w':
+		debug_console("[%s]", "w");
         break;
       case 'l':
+		debug_console("[%s]", "l");
         break;
       case 'u':
+		debug_console("[%s]", "u");
         break;
       case 't':
+		debug_console("[%s]", "t");
         break;
       case 's':
+		debug_console("[%s]", "s");
         break;
       case 'o':
-        debug_console("[%s]", optarg);
+		debug_console("[%s]+[%s]", "o", optarg);
         break;
       case 'b':
-        //debug_console("[%s]", optarg);
+		debug_console("[%s]", "s");
         break;
       case 'd':
         debug_flag = true;
         l_debug_flag = true;
         y_debug_flag = true;
+		debug_console("[%s]", "s");
         break;
       case '?':
+		debug_console("-->");
         if (optopt == 'o') {
           fprintf(stderr, "option -%c requires log filename\n", optopt);
         } 
