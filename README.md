@@ -18,13 +18,26 @@
 | fb2-4 | O | | | |
 | fb2-5 | O | | | |
 | fb3-1 | O | | | |
-| fb3-2 | O | | O | cmake 적용 |
+| fb3-2 | O | | O | * use cmake<br>* add arguments processing with getopt<br>* accept block and inline comments |
 
 commit at windows
 
 ### Branch
 
-* typedef: `git checkout -t origin/typedef`
+| Branch Name | Descriptions |
+| :--- | :--- |
+| typedef | redefine all sturct by typedef and apply all source code |
+| fb3-2-default | **Source code without additional functions<br><br>The 'fb3-2' project has been developed with additional functions.<br>  - Compiling at Visual Studio<br>  - Block and Inline Comments<br>  - Arguments processing with getopt()  |
+
+* checkout/push
+
+```
+git checkout -t origin/typedef
+```
+
+```
+git push origin typedef
+```
 
 ### Source code for macOS and Windows
 * macOS(Terminal)
