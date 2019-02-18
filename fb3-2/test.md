@@ -3,10 +3,10 @@
 ### 실행 예제
 
 ```
-> let sq(n)=e=1; while |((t=n/e)-e)>.001 do e=avg(e,t);;
-Defined sq
 > let avg(a,b)=(a+b)/2;
 Defined avg
+> let sq(n)=e=1; while |((t=n/e)-e)>.001 do e=avg(e,t);;
+Defined sq
 > sq(10)
 = 3.162
 > sqrt(10)

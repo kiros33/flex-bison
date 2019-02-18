@@ -484,55 +484,60 @@ int main(int argc, char **argv) {
 
   opterr = 0;
 
+  int quit_flag = 0;
+
   while ((c = getopt(argc, argv, "wlutso:b:d")) != -1) {
     debug_console("[debug][main][options][%c]", c);
     switch (c) {
       case 'w':
-		debug_console("[%s]", "w");
+        debug_console("[%s option]", "w");
         break;
       case 'l':
-		debug_console("[%s]", "l");
+        debug_console("[%s option]", "l");
         break;
       case 'u':
-		debug_console("[%s]", "u");
+        debug_console("[%s option]", "u");
         break;
       case 't':
-		debug_console("[%s]", "t");
+        debug_console("[%s option]", "t");
         break;
       case 's':
-		debug_console("[%s]", "s");
+        debug_console("[%s option]", "s");
         break;
       case 'o':
-		debug_console("[%s]+[%s]", "o", optarg);
+        debug_console("[%s option]+[%s]", "o", optarg);
         break;
       case 'b':
-		debug_console("[%s]", "s");
+        debug_console("[%s option]+[%s]", "binary output", optarg);
         break;
       case 'd':
         debug_flag = true;
         l_debug_flag = true;
         y_debug_flag = true;
-		debug_console("[%s]", "s");
+        debug_console("[%s option]", "debug");
         break;
       case '?':
-		debug_console("-->");
+        debug_console("-->");
         if (optopt == 'o') {
           fprintf(stderr, "option -%c requires log filename\n", optopt);
-        } 
-        else if (optopt == 'b') {
+        } else if (optopt == 'b') {
           fprintf(stderr, "option -%c requires binary filename\n", optopt);
         } else if (isprint(optopt)) {
           fprintf(stderr, "Unknown option `-%c`\n", optopt);
-        }
-        else {
+        } else {
           fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
         }
-        return 1;
+        quit_flag++;
+        break;
       default:
+        debug_console("[%s][%c]", "default", c);
         abort();
     }
     debug_console("\n");
+    if(quit_flag > 0) return 1;
   }
+
+  return 1;
 
   for (index = optind; index < argc; index++) {
     fprintf(stderr, "Not supported option argument %s\n", argv[index]);
