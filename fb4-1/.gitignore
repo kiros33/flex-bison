@@ -1,0 +1,32 @@
+# Visual Studio build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# Visual Studio cache/options directory
+.vs/
+
+# Subversion Cache
+**/.svn
+
+# CMake files
+**/CMakeCache.txt
+**/CMakeFiles/
+**/cmake_install.cmake
+**/Makefile
+
+# Flex/Bison intermediate files
+parser.cpp
+parser.h
+scanner.cpp
+scanner.h
+
+# Target file
+fb
