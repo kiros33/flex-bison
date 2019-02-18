@@ -30,14 +30,14 @@ add_custom_target (test
 )
 
 add_custom_target (test0
-  COMMAND ${TARGET}
+  COMMAND ${TARGET} -d
   DEPENDS ${TARGET}
   WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
   COMMENT "execute ${TARGET} for test"
 )
 
 add_custom_target (test1
-  COMMAND ${TARGET} ${TESTFILE1}
+  COMMAND ${TARGET} -d ${TESTFILE1}
   DEPENDS ${TARGET}
   WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
   COMMENT "execute ${TARGET} with ${TESTFILE1} for test"
