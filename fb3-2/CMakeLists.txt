@@ -23,7 +23,7 @@ ADD_FLEX_BISON_DEPENDENCY(DefaultScanner DefaultParser)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(${TARGET} ${BISON_DefaultParser_OUTPUTS} ${FLEX_DefaultScanner_OUTPUTS} main.cpp)
+add_executable(${TARGET} ${BISON_DefaultParser_OUTPUTS} ${FLEX_DefaultScanner_OUTPUTS} wingetopt.c main.cpp)
 
 add_custom_target (test
   DEPENDS test0
