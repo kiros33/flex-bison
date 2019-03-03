@@ -12,7 +12,7 @@ set( PROJECT_VERSION_REVISION 0 )
 set( PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH} )
 
 set(TARGET fb)
-set(TESTFILE1 test.txt)
+set(TESTFILE1 test.sql)
 set(TESTFILE2 input.txt)
 
 add_definitions(-D_DEBUG)
@@ -26,7 +26,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_executable(${TARGET} ${BISON_DefaultParser_OUTPUTS} ${FLEX_DefaultScanner_OUTPUTS} wingetopt.c main.cpp)
 
 add_custom_target (test
-  DEPENDS test0
+  DEPENDS test1
 )
 
 add_custom_target (test0
@@ -37,7 +37,7 @@ add_custom_target (test0
 )
 
 add_custom_target (test1
-  COMMAND ${TARGET} -d ${TESTFILE1}
+  COMMAND ${TARGET} -f ${TESTFILE1}
   DEPENDS ${TARGET}
   WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
   COMMENT "execute ${TARGET} with ${TESTFILE1} for test"

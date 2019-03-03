@@ -52,7 +52,7 @@ ALL { return ALL; }
 ALTER { return ALTER; }
 ANALYZE { return ANALYZE; }
 
-
+"yydebug"([ \t]+("on"|"off"))? { if(strstr(yytext + 7, "off")) yydebug = 0; else if (strstr(yytext + 7, "on")) yydebug = 1; l_debug_console("[debug][l][yydebug][%s]", ((yydebug) ? "true" : "false")); }
   /* environment variables */
 "debug_flag"([ \t]+("on"|"off"))? { if(strstr(yytext + 10, "off")) debug_flag = false; else if (strstr(yytext + 10, "on")) debug_flag = true; l_debug_console("[debug][l][debug_flag][%s]", ((debug_flag) ? "true" : "false")); }
 "l_debug_flag"([ \t]+("on"|"off"))? { if(strstr(yytext + 12, "off")) l_debug_flag = false; else if (strstr(yytext + 12, "on")) l_debug_flag = true; l_debug_console("[debug][l][l_debug_flag][%s]", ((l_debug_flag) ? "true" : "false")); }
@@ -334,7 +334,7 @@ DATE_SUB/"("              { return FDATE_SUB; }
 
   /* check trailing context manually */
 COUNT                     {
-  int c = input();
+  int c = yyinput();
   unput(c);
 
   if(c == '(') return FCOUNT;
