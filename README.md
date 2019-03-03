@@ -19,6 +19,7 @@
 | fb2-5 | O | | | |
 | fb3-1 | O | | | |
 | fb3-2 | O | | O | * use cmake<br>* add arguments processing with getopt<br>* accept block and inline comments |
+| fb4-1 | O | | | |
 
 commit at windows
 
