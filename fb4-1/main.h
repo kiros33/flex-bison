@@ -11,6 +11,11 @@
   #define strdup _strdup
 #endif
 
+#ifdef _MSC_VER
+  /* fopen 경고 없애기 */
+  #define _CRT_SECURE_NO_WARNINGS
+#endif
+
 //#define YYDEBUG 1
 
 extern bool debug_flag;
