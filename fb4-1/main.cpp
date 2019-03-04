@@ -3,6 +3,8 @@
   helper functions for fb3-2
 */
 
+#include "main.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -10,7 +12,6 @@
 #include <math.h>
 //#include <unistd.h>
 #include <ctype.h>
-#include "main.h"
 #include "parser.h"
 #include "wingetopt.h"
 
