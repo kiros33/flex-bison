@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
   int quit_flag = 0;
 
 
-  FILE *fp;
+  FILE *fp = NULL;
 
   struct pwc mypwc = { 0, 0, 0 };   /* my instance data */
   yyscan_t scanner;                 /* flex instance data */
