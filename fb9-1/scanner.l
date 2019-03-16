@@ -58,5 +58,3 @@ extern int lines;
 %%
 
 /* code */
-
-void ppp(void) { }
