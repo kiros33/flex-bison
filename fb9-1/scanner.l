@@ -19,12 +19,12 @@
 
 #ifdef _MSC_VER
   #pragma warning(disable: 4005)
-  /* À©µµ¿ì¿¡¼­ Flex¸¸ »ç¿ëÇÒ °æ¿ì unistd.h ÂüÁ¶ ¿À·ù°¡ ¹ß»ı */
+  /* ìœˆë„ìš°ì—ì„œ Flexë§Œ ì‚¬ìš©í•  ê²½ìš° unistd.h ì°¸ì¡° ì˜¤ë¥˜ê°€ ë°œìƒ */
   #define YY_NO_UNISTD_H
 #endif
 
 #ifdef _MSC_VER
-  /* fopen °æ°í ¾ø¾Ö±â */
+  /* fopen Â°Ã¦Â°Ã­ Â¾Ã¸Â¾Ã–Â±Ã¢ */
   #define _CRT_SECURE_NO_WARNINGS
 #endif
 
