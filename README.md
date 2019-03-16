@@ -13,6 +13,7 @@
 | fb1-4 | O | | ? | |
 | fb1-5 | O | | ? | |
 | fb2-1 | O | | | |
+| fb2-1-cmake | O | | O | * use cmake |
 | fb2-2 | O | | | |
 | fb2-3 | O | | O | |
 | fb2-4 | O | | | |
@@ -20,6 +21,7 @@
 | fb3-1 | O | | | |
 | fb3-2 | O | | O | * use cmake<br>* add arguments processing with getopt<br>* accept block and inline comments |
 | fb4-1 | O | | O | |
+| fb9-1 | O | | O | fb2-1 기반 Pure Scanner 구현 |
 
 commit at windows
 
