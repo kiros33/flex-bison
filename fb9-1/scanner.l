@@ -1,6 +1,5 @@
 /*
-  Example 2-1. Word count, reading one file fb2-1.l
-  even more like Unix wc
+  Example 9-1. Pure version of word count program
 */
 
 /* generate header file */
@@ -11,7 +10,8 @@
 
 %option always-interactive nounistd
 
-%option noyywrap nodefault yylineno
+/* pure version of word count program */
+%option noyywrap nodefault yylineno reentrant
 
 %top{
 
@@ -36,24 +36,26 @@ extern int l_debug_console(const char *, ...);
 
 }
 
+/* just like Unix wc */ 
 %{
 
 #include "main.h" 
 
 %}
 
-/* just like Unix wc */ 
-%{
-extern int chars; 
-extern int words;
-extern int lines;
-%}
+%option extra-type="struct pwc *"
 
 %%
 
-[a-zA-Z]+    { words++; chars += (int)strlen(yytext); }
-\n           { chars++; lines++; }
-.            { chars++; }
+%{
+
+struct pwc *pp = yyextra;
+
+%}
+
+[a-zA-Z]+    { pp->words++; pp->chars += (int)strlen(yytext); }
+\n           { pp->chars++; pp->lines++; }
+.            { pp->chars++; }
 
 %%
 

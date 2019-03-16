@@ -1,6 +1,5 @@
 /*
-  Example 3-8. Advanced calculator helper functions fb3-2func.c
-  helper functions for fb3-2
+  Example 9-1. Pure version of word count program
 */
 
 #include "main.h"
@@ -59,15 +58,11 @@ int y_debug_console(const char *format, ...) {
   return done;
 }
 
-int chars = 0; 
-int words = 0; 
-int lines = 0;
-
 void yyerror(const char *s, ...) {
   va_list ap;
   va_start(ap, s);
 
-  fprintf(stderr, "%d: error: ", yylineno);
+  fprintf(stderr, "%d: error: ", 0);
   vfprintf(stderr, s, ap);
   fprintf(stderr, "\n");
 
@@ -80,8 +75,6 @@ void yyerror(const char *s, ...) {
 */
 
 int main(int argc, char **argv) {
-  extern FILE *yyin;
-
   int index;
   int optc;
   int result_flag = 0;
@@ -90,18 +83,30 @@ int main(int argc, char **argv) {
 
   int quit_flag = 0;
 
+
+  FILE *fp;
+
+  struct pwc mypwc = { 0, 0, 0 };   /* my instance data */
+  yyscan_t scanner;                 /* flex instance data */
+
+  if(yylex_init_extra(&mypwc, &scanner)) { 
+    perror("init alloc failed");
+    return 1;
+  }
+
   while ((optc = getopt(argc, argv, "df:")) != -1) {
     debug_console("[debug][main][options][%c]", optc);
     switch (optc) {
       case 'f':
-        debug_console("[%s option]+[%s]", "sql input", optarg);
+        debug_console("[%s option]+[%s]", "text input", optarg);
 
-        yyin = fopen(optarg, "r");
-
-        if(yyin == NULL) { 
-          perror(optarg); 
-          exit(1); 
+        debug_console("[%s]", "opening");
+        if(!(fp = fopen(optarg, "r"))) {
+          debug_console("[%s]", "error");
+          perror(optarg);
+          exit(1);
         }
+        debug_console("[%s]", "opened");
         break;
       case 'd':
         //yydebug = 1;
@@ -133,14 +138,36 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Not supported option argument %s\n", argv[index]);
   }
 
-  result_flag = yylex();
+  if (fp) {
+    yyset_in(fp, scanner);
+  }
+  else {
+    yyset_in(stdin, scanner);
+  }
+
+  result_flag = yylex(scanner);
   
   if (!result_flag) {
-    printf("Success: %8d%8d%8d\n", lines, words, chars); 
+    printf("Success: %8d%8d%8d\n", mypwc.lines, mypwc.words, mypwc.chars); 
   }
   else {
     printf("Failure: count failed!\n");
   }
+
+  if(fp) {
+    debug_console("[debug][main][%s]", "file");
+    debug_console("[%s]", "closing");
+    fclose(yyget_in(scanner));
+    debug_console("[%s]", "closed");
+    debug_console("\n");
+  }
+  else {
+    debug_console("[debug][main][%s]", "stdin");
+    debug_console("[%s]", "closed");
+    debug_console("\n");
+  }
+
+  yylex_destroy(scanner);
 
   return result_flag;
 }
