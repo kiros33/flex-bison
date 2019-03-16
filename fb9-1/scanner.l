@@ -24,7 +24,7 @@
 #endif
 
 #ifdef _MSC_VER
-  /* fopen °æ°í ¾ø¾Ö±â */
+  /* fopen 경고 없애기 */
   #define _CRT_SECURE_NO_WARNINGS
 #endif
 
