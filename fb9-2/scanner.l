@@ -31,6 +31,8 @@
 #ifdef _MSC_VER
   /* fopen 경고 없애기 */
   #define _CRT_SECURE_NO_WARNINGS
+  /* 윈도우에서 Flex만 사용할 경우 unistd.h 참조 오류가 발생 */
+  #define YY_NO_UNISTD_H
 #endif
 
 #include <stdarg.h>
