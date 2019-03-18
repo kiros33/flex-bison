@@ -22,6 +22,7 @@
 | fb3-2 | O | | O | * use cmake<br>* add arguments processing with getopt<br>* accept block and inline comments |
 | fb4-1 | O | | O | |
 | fb9-1 | O | | O | fb2-1 기반 Pure Scanner 구현 |
+| fb9-2 | O | | O | fb3-2 기반 Pure Scanner & Pure Parser 구현 |
 
 commit at windows
 
