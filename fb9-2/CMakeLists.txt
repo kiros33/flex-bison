@@ -17,7 +17,7 @@ set(TESTFILE2 input.txt)
 
 add_definitions(-D_DEBUG)
 
-BISON_TARGET(DefaultParser parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.h)
+BISON_TARGET(DefaultParser parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.h VERBOSE ${CMAKE_CURRENT_BINARY_DIR}/parser.output)
 FLEX_TARGET(DefaultScanner scanner.l ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/scanner.h)
 ADD_FLEX_BISON_DEPENDENCY(DefaultScanner DefaultParser)
 
