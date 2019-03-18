@@ -1,4 +1,8 @@
 /*
+  Example 2-1. Word count, reading one file fb2-1.l
+  even more like Unix wc
+*/
+/*
   Example 9-1. Pure version of word count program
 */
 

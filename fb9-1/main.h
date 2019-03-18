@@ -2,8 +2,11 @@
 #define __MAIN_H__ 1
 
 /*
-  Example 3-5. Advanced calculator header fb3-2.h
-  Declarations for a calculator fb3-1
+  Example 2-1. Word count, reading one file fb2-1.l
+  even more like Unix wc
+*/
+/*
+  Example 9-1. Pure version of word count program
 */
 
 #ifdef _MSC_VER
