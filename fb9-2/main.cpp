@@ -2,6 +2,9 @@
   Example 3-8. Advanced calculator helper functions fb3-2func.c
   helper functions for fb3-2
 */
+/*
+  Example 9-5. Helper functions purecalcfuncs.c
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +15,7 @@
 #include <ctype.h>
 #include "main.h"
 #include "parser.h"
+#include "scanner.h"
 #include "wingetopt.h"
 
 bool debug_flag = false;
@@ -59,7 +63,7 @@ int y_debug_console(const char *format, ...) {
   return done;
 }
 
-struct symbol symtab[NHASH];
+//struct symbol symtab[NHASH];
 
 /* symbol table */
 /* hash a symbol */
@@ -74,8 +78,8 @@ static unsigned int symhash(char *sym) {
   return hash;
 }
 
-struct symbol *lookup(char *sym) {
-  struct symbol *sp = &symtab[symhash(sym) % NHASH];
+struct symbol *lookup(struct pcdata *pp, char *sym) {
+  struct symbol *sp = &(pp->symtab)[symhash(sym) % NHASH];
   int scount = NHASH; /* how many have we looked at */
 
   while (--scount >= 0) {
@@ -90,17 +94,17 @@ struct symbol *lookup(char *sym) {
       return sp;
     }
 
-    if (++sp >= symtab + NHASH) sp = symtab; /* try the next entry */
+    if (++sp >= (pp->symtab) + NHASH) sp = (pp->symtab); /* try the next entry */
   }
-  yyerror("symbol table overflow\n");
+  yyerror(pp, "symbol table overflow\n");
   abort(); /* tried them all, table is full */
 }
 
-struct ast *newast(int nodetype, struct ast *l, struct ast *r) {
+struct ast *newast(struct pcdata *pp, int nodetype, struct ast *l, struct ast *r) {
   struct ast *a = (struct ast *)malloc(sizeof(struct ast));
 
   if (!a) {
-    yyerror("out of space");
+    yyerror(pp, "out of space");
     exit(0);
   }
 
@@ -111,11 +115,11 @@ struct ast *newast(int nodetype, struct ast *l, struct ast *r) {
   return a;
 }
 
-struct ast *newnum(double d) {
+struct ast *newnum(struct pcdata *pp, double d) {
   struct numval *a = (struct numval *)malloc(sizeof(struct numval));
 
   if (!a) {
-    yyerror("out of space");
+    yyerror(pp, "out of space");
     exit(0);
   }
 
@@ -125,11 +129,11 @@ struct ast *newnum(double d) {
   return (struct ast *)a;
 }
 
-struct ast *newcmp(int cmptype, struct ast *l, struct ast *r) {
+struct ast *newcmp(struct pcdata *pp, int cmptype, struct ast *l, struct ast *r) {
   struct ast *a = (struct ast *)malloc(sizeof(struct ast));
 
   if (!a) {
-    yyerror("out of space");
+    yyerror(pp, "out of space");
     exit(0);
   }
 
@@ -140,11 +144,11 @@ struct ast *newcmp(int cmptype, struct ast *l, struct ast *r) {
   return a;
 }
 
-struct ast *newfunc(int functype, struct ast *l) {
+struct ast *newfunc(struct pcdata *pp, int functype, struct ast *l) {
   struct fncall *a = (struct fncall *)malloc(sizeof(struct fncall));
 
   if (!a) {
-    yyerror("out of space");
+    yyerror(pp, "out of space");
     exit(0);
   }
 
@@ -155,11 +159,11 @@ struct ast *newfunc(int functype, struct ast *l) {
   return (struct ast *)a;
 }
 
-struct ast *newcall(struct symbol *s, struct ast *l) {
+struct ast *newcall(struct pcdata *pp, struct symbol *s, struct ast *l) {
   struct ufncall *a = (struct ufncall *)malloc(sizeof(struct ufncall));
 
   if (!a) {
-    yyerror("out of space");
+    yyerror(pp, "out of space");
     exit(0);
   }
 
@@ -170,11 +174,11 @@ struct ast *newcall(struct symbol *s, struct ast *l) {
   return (struct ast *)a;
 }
 
-struct ast *newref(struct symbol *s) {
+struct ast *newref(struct pcdata *pp, struct symbol *s) {
   struct symref *a = (struct symref *)malloc(sizeof(struct symref));
 
   if (!a) {
-    yyerror("out of space");
+    yyerror(pp, "out of space");
     exit(0);
   }
 
@@ -184,11 +188,11 @@ struct ast *newref(struct symbol *s) {
   return (struct ast *)a;
 }
 
-struct ast *newasgn(struct symbol *s, struct ast *v) {
+struct ast *newasgn(struct pcdata *pp, struct symbol *s, struct ast *v) {
   struct symasgn *a = (struct symasgn *)malloc(sizeof(struct symasgn));
 
   if (!a) {
-    yyerror("out of space");
+    yyerror(pp, "out of space");
     exit(0);
   }
 
@@ -199,12 +203,11 @@ struct ast *newasgn(struct symbol *s, struct ast *v) {
   return (struct ast *)a;
 }
 
-struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl,
-                    struct ast *el) {
+struct ast *newflow(struct pcdata *pp, int nodetype, struct ast *cond, struct ast *tl, struct ast *el) {
   struct flow *a = (struct flow *)malloc(sizeof(struct flow));
 
   if (!a) {
-    yyerror("out of space");
+    yyerror(pp, "out of space");
     exit(0);
   }
 
@@ -217,7 +220,7 @@ struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl,
 }
 
 /* free a tree of ASTs */
-void treefree(struct ast *a) {
+void treefree(struct pcdata *pp, struct ast *a) {
   switch (a->nodetype) {
     /* two subtrees */
     case '+':
@@ -226,12 +229,12 @@ void treefree(struct ast *a) {
     case '/':
     case '1': case '2': case '3': case '4': case '5': case '6':
     case 'L':
-      treefree(a->r);
+      treefree(pp, a->r);
 
     /* one subtree */
     case '|':
     case 'M': case 'C': case 'F':
-      treefree(a->l);
+      treefree(pp, a->l);
       
     /* no subtree */
     case 'K': case 'N':
@@ -244,8 +247,8 @@ void treefree(struct ast *a) {
     /* up to three subtrees */
     case 'I': case 'W':
       free(((struct flow *)a)->cond);
-      if (((struct flow *)a)->tl) treefree(((struct flow *)a)->tl);
-      if (((struct flow *)a)->el) treefree(((struct flow *)a)->el);
+      if (((struct flow *)a)->tl) treefree(pp, ((struct flow *)a)->tl);
+      if (((struct flow *)a)->el) treefree(pp, ((struct flow *)a)->el);
       break;
 
     default:
@@ -255,11 +258,11 @@ void treefree(struct ast *a) {
   free(a); /* always free the node itself */
 }
 
-struct symlist *newsymlist(struct symbol *sym, struct symlist *next) {
+struct symlist *newsymlist(struct pcdata *pp, struct symbol *sym, struct symlist *next) {
   struct symlist *sl = (struct symlist *)malloc(sizeof(struct symlist));
 
   if (!sl) {
-    yyerror("out of space");
+    yyerror(pp, "out of space");
     exit(0);
   }
 
@@ -270,7 +273,7 @@ struct symlist *newsymlist(struct symbol *sym, struct symlist *next) {
 }
 
 /* free a list of symbols */
-void symlistfree(struct symlist *sl) {
+void symlistfree(struct pcdata *pp, struct symlist *sl) {
   struct symlist *nsl;
 
   while (sl) {
@@ -280,14 +283,14 @@ void symlistfree(struct symlist *sl) {
   }
 }
 
-static double callbuiltin(struct fncall *); 
-static double calluser(struct ufncall *);
+static double callbuiltin(struct pcdata *pp, struct fncall *); 
+static double calluser(struct pcdata *pp, struct ufncall *);
 
-double eval(struct ast *a) {
+double eval(struct pcdata *pp, struct ast *a) {
   double v; /* calculated value of this subtree */
 
   if (!a) {
-    yyerror("internal error, null eval");
+    yyerror(pp, "internal error, null eval");
     return 0.0;
   }
 
@@ -299,39 +302,39 @@ double eval(struct ast *a) {
     case 'N': v = ((struct symref *)a)->s->value; break;
 
     /* assignment */
-    case '=': v = ((struct symasgn *)a)->s->value = eval(((struct symasgn *)a)->v); break;
+    case '=': v = ((struct symasgn *)a)->s->value = eval(pp, ((struct symasgn *)a)->v); break;
 
       /* expressions */
-    case '+': v = eval(a->l) + eval(a->r); break;
-    case '-': v = eval(a->l) - eval(a->r); break;
-    case '*': v = eval(a->l) * eval(a->r); break;
-    case '/': v = eval(a->l) / eval(a->r); break;
-    case '|': v = fabs(eval(a->l)); break;
-    case 'M': v = -eval(a->l); break;
+    case '+': v = eval(pp, a->l) + eval(pp, a->r); break;
+    case '-': v = eval(pp, a->l) - eval(pp, a->r); break;
+    case '*': v = eval(pp, a->l) * eval(pp, a->r); break;
+    case '/': v = eval(pp, a->l) / eval(pp, a->r); break;
+    case '|': v = fabs(eval(pp, a->l)); break;
+    case 'M': v = -eval(pp, a->l); break;
 
     /* comparisons */
-    case '1': v = (eval(a->l) > eval(a->r))? 1 : 0; break;
-    case '2': v = (eval(a->l) < eval(a->r))? 1 : 0; break;
-    case '3': v = (eval(a->l) != eval(a->r))? 1 : 0; break;
-    case '4': v = (eval(a->l) == eval(a->r))? 1 : 0; break;
-    case '5': v = (eval(a->l) >= eval(a->r))? 1 : 0; break;
-    case '6': v = (eval(a->l) <= eval(a->r))? 1 : 0; break;
+    case '1': v = (eval(pp, a->l) > eval(pp, a->r))? 1 : 0; break;
+    case '2': v = (eval(pp, a->l) < eval(pp, a->r))? 1 : 0; break;
+    case '3': v = (eval(pp, a->l) != eval(pp, a->r))? 1 : 0; break;
+    case '4': v = (eval(pp, a->l) == eval(pp, a->r))? 1 : 0; break;
+    case '5': v = (eval(pp, a->l) >= eval(pp, a->r))? 1 : 0; break;
+    case '6': v = (eval(pp, a->l) <= eval(pp, a->r))? 1 : 0; break;
 
     /* control flow */
     /* null expressions allowed in the grammar, so check for them */
 
     /* if/then/else */
     case 'I':
-      if (eval(((struct flow *)a)->cond) != 0) { /* check the condition */
+      if (eval(pp, ((struct flow *)a)->cond) != 0) { /* check the condition */
         if (((struct flow *)a)->tl) { /* the true branch */
-          v = eval(((struct flow *)a)->tl);
+          v = eval(pp, ((struct flow *)a)->tl);
         }
         else {
           v = 0.0; /* a default value */
         }
       } else {
         if (((struct flow *)a)->el) { /* the false branch */
-          v = eval(((struct flow *)a)->el);
+          v = eval(pp, ((struct flow *)a)->el);
         } else {
           v = 0.0; /* a default value */
         }
@@ -343,32 +346,32 @@ double eval(struct ast *a) {
       v = 0.0; /* a default value */
 
       if (((struct flow *)a)->tl) {
-        while (eval(((struct flow *)a)->cond) != 0) { /* evaluate the condition */
-          v = eval(((struct flow *)a)->tl); /* evaluate the target statements */
+        while (eval(pp, ((struct flow *)a)->cond) != 0) { /* evaluate the condition */
+          v = eval(pp, ((struct flow *)a)->tl); /* evaluate the target statements */
         }
       }
       break; /* value of last statement is value of while/do */
     
     /* list of statements */
-    case 'L': eval(a->l); v = eval(a->r); break;
-    case 'F': v = callbuiltin((struct fncall *)a); break;
-    case 'C': v = calluser((struct ufncall *)a); break;
+    case 'L': eval(pp, a->l); v = eval(pp, a->r); break;
+    case 'F': v = callbuiltin(pp, (struct fncall *)a); break;
+    case 'C': v = calluser(pp, (struct ufncall *)a); break;
 
     default: printf("internal error: bad node %c\n", a->nodetype);
   }
   return v;
 }
 
-static double callbuiltin(struct fncall *f) {
+static double callbuiltin(struct pcdata *pp, struct fncall *f) {
   enum bifs functype = f->functype;
-  double v = eval(f->l);
+  double v = eval(pp, f->l);
 
   switch (functype) {
     case B_sqrt: return sqrt(v);
     case B_exp: return exp(v);
     case B_log: return log(v);
     case B_print: printf("= %4.4g\n", v); return v;
-    default: yyerror("Unknown built-in function %d", functype); return 0.0;
+    default: yyerror(pp, "Unknown built-in function %d", functype); return 0.0;
   }
 }
 
@@ -376,15 +379,15 @@ static double callbuiltin(struct fncall *f) {
   > let max(x,y) = if x >= y then x; else y;;
   > max(4+5,6+7)
 */
-void dodef(struct symbol *name, struct symlist *syms, struct ast *func) {
-  if (name->syms) symlistfree(name->syms);
-  if (name->func) treefree(name->func);
+void dodef(struct pcdata *pp, struct symbol *name, struct symlist *syms, struct ast *func) {
+  if (name->syms) symlistfree(pp, name->syms);
+  if (name->func) treefree(pp, name->func);
 
   name->syms = syms;
   name->func = func;
 }
 
-static double calluser(struct ufncall *f) {
+static double calluser(struct pcdata *pp, struct ufncall *f) {
   struct symbol *fn = f->s;   /* function name */
   struct symlist *sl;         /* dummy arguments */
   struct ast *args = f->l;    /* actual arguments */
@@ -394,7 +397,7 @@ static double calluser(struct ufncall *f) {
   int i;
 
   if (!fn->func) {
-    yyerror("call to undefined function", fn->name);
+    yyerror(pp, "call to undefined function", fn->name);
     return 0;
   }
 
@@ -407,24 +410,24 @@ static double calluser(struct ufncall *f) {
   newval = (double *)malloc(nargs * sizeof(double));
 
   if (!oldval || !newval) {
-    yyerror("Out of space in %s", fn->name);
+    yyerror(pp, "Out of space in %s", fn->name);
     return 0.0;
   }
 
   /* evaluate the arguments */
   for (i = 0; i < nargs; i++) {
     if (!args) {
-      yyerror("too few args in call to %s", fn->name);
+      yyerror(pp, "too few args in call to %s", fn->name);
       free(oldval);
       free(newval);
       return 0.0;
     }
 
     if (args->nodetype == 'L') { /* if this is a list node */
-      newval[i] = eval(args->l);
+      newval[i] = eval(pp, args->l);
       args = args->r;
     } else { /* if it's the end of the list */
-      newval[i] = eval(args);
+      newval[i] = eval(pp, args);
       args = NULL;
     }
   }
@@ -442,7 +445,7 @@ static double calluser(struct ufncall *f) {
   free(newval);
 
   /* evaluate the function */
-  v = eval(fn->func);
+  v = eval(pp, fn->func);
 
   /* put the real values of the dummies back */
   sl = fn->syms;
@@ -458,10 +461,10 @@ static double calluser(struct ufncall *f) {
   return v;
 }
 
-void yyerror(const char *s, ...) {
+void yyerror(struct pcdata *pp, const char *s, ...) {
   va_list ap;
   va_start(ap, s);
-  fprintf(stderr, "%d:%d %s:", yylineno, 0, yytext);
+  fprintf(stderr, "%d: error", yyget_lineno(pp->scaninfo));
   vfprintf(stderr, s, ap);
   fprintf(stderr, "\n");
 }
@@ -541,6 +544,29 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Not supported option argument %s\n", argv[index]);
   }
 
-  printf("> ");
-  return yyparse();
+  struct pcdata p = { NULL, 0, NULL };
+
+  /* set up scanner */
+  if(yylex_init_extra(&p, &p.scaninfo)) {
+    perror("init alloc failed");
+    exit(1);
+  }
+
+  /* allocate and zero out the symbol table */
+  if(!(p.symtab = (struct symbol *)calloc(NHASH, sizeof(struct symbol)))) {
+    perror("sym alloc failed");
+    return 1;
+  }
+
+  for (;;) {
+    printf("> ");
+    yyparse(&p);
+    if (p.ast) {
+      printf("= %4.4g\n", eval(&p, p.ast));
+      treefree(&p, p.ast);
+      p.ast = 0;
+    }
+  }
+
+  return 0;
 }

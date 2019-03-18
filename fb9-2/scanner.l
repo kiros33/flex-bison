@@ -2,6 +2,9 @@
   Example 3-7. Advanced calculator lexer fb3-2.l
   recognize tokens for the calculator
 */
+/*
+  Example 9-3. Reentrant calculator scanner purecalc.l
+*/
 
 /* generate header file */
 %option header-file = "scanner.h"
@@ -11,7 +14,13 @@
 
 %option always-interactive nounistd
 
-%option noyywrap nodefault yylineno
+/* recognize tokens for the calculator */
+/* pure scanner and parser version */
+/* $Header: /usr/home/johnl/flnb/RCS/ch09.tr,v 1.4 2009/05/19 18:28:27 johnl Exp $ */
+
+%option noyywrap nodefault yylineno reentrant bison-bridge
+
+%option extra-type="struct pcdata *"
 
 %x COMMENT
 
@@ -32,14 +41,18 @@ extern int l_debug_console(const char *, ...);
 }
 
 %{
-  #include "main.h" 
   #include "parser.h"
+  #include "main.h" 
 %}
 
 /* float exponent */
 EXP ([Ee][-+]?[0-9]+)
 
 %%
+
+%{
+struct pcdata *pp = yyextra;
+%}
 
 "exit" { yyterminate(); } // exit 기능 추가
 
@@ -61,12 +74,12 @@ EXP ([Ee][-+]?[0-9]+)
 ")" { l_debug_console("[debug][l][single char operator][%c][%d]", yytext[0], yytext[0]); return yytext[0]; }
 
   /* comparison ops, all are a CMP token */
-">"  { yylval.fn = 1; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
-"<"  { yylval.fn = 2; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
-"<>" { yylval.fn = 3; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
-"==" { yylval.fn = 4; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
-">=" { yylval.fn = 5; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
-"<=" { yylval.fn = 6; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval.fn); return CMP; }
+">"  { yylval->fn = 1; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval->fn); return CMP; }
+"<"  { yylval->fn = 2; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval->fn); return CMP; }
+"<>" { yylval->fn = 3; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval->fn); return CMP; }
+"==" { yylval->fn = 4; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval->fn); return CMP; }
+">=" { yylval->fn = 5; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval->fn); return CMP; }
+"<=" { yylval->fn = 6; l_debug_console("[debug][l][CMP][%s][%d]", yytext, yylval->fn); return CMP; }
 
   /* keywords */
 "if"    { l_debug_console("[debug][l][IF]");     return IF; }
@@ -77,16 +90,16 @@ EXP ([Ee][-+]?[0-9]+)
 "let"   { l_debug_console("[debug][l][LET]");    return LET ;}
 
   /* built-in functions */
-"sqrt"  { yylval.fn = B_sqrt;  l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval.fn); return FUNC; }
-"exp"   { yylval.fn = B_exp;   l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval.fn); return FUNC; }
-"log"   { yylval.fn = B_log;   l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval.fn); return FUNC; }
-"print" { yylval.fn = B_print; l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval.fn); return FUNC; }
+"sqrt"  { yylval->fn = B_sqrt;  l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval->fn); return FUNC; }
+"exp"   { yylval->fn = B_exp;   l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval->fn); return FUNC; }
+"log"   { yylval->fn = B_log;   l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval->fn); return FUNC; }
+"print" { yylval->fn = B_print; l_debug_console("[debug][l][FUNC][%s][%d]", yytext, yylval->fn); return FUNC; }
 
   /* names */
-[a-zA-Z][a-zA-Z0-9_-]* { yylval.s = lookup(yytext); l_debug_console("[debug][l][NAME][%s][%f]", yytext, yylval.s->value); return NAME; }
+[a-zA-Z][a-zA-Z0-9_-]* { yylval->s = lookup(pp, yytext); l_debug_console("[debug][l][NAME][%s][%f]", yytext, yylval->s->value); return NAME; }
 
 [0-9]+"."[0-9]*{EXP}? |
-"."?[0-9]+{EXP}? { yylval.d = atof(yytext); l_debug_console("[debug][l][NUMBER][%s][%f]", yytext, yylval.d); return NUMBER; }
+"."?[0-9]+{EXP}? { yylval->d = atof(yytext); l_debug_console("[debug][l][NUMBER][%s][%f]", yytext, yylval->d); return NUMBER; }
 
 
   /* comments */
@@ -103,6 +116,6 @@ EXP ([Ee][-+]?[0-9]+)
 
 \n { l_debug_console("[debug][l][EOL]"); return EOL; }
 
-. { yyerror("Mystery character %c\n", *yytext); }
+. { yyerror(pp, "Mystery character %c\n", *yytext); }
 
 %%

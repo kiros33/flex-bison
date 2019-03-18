@@ -5,6 +5,9 @@
   Example 3-5. Advanced calculator header fb3-2.h
   Declarations for a calculator fb3-1
 */
+/*
+  Example 9-2. Reentrant calc header file purecalc.h
+*/
 
 #ifdef _MSC_VER
   /* strdup 경고 없애기 */
@@ -16,9 +19,19 @@ extern bool l_debug_flag;
 extern bool y_debug_flag;
 
 /* interface to the lexer */
-extern int yylineno; /* from lexer */
-extern char *yytext; /* from lexer */
-void yyerror(const char *s, ...);
+void yyerror(struct pcdata *pp, const char *s, ...);
+
+/*
+  * Declarations for a calculator, pure version
+*/
+
+/* per-parse data */ 
+
+struct pcdata {
+  void *scaninfo;        /* scanner context */
+  struct symbol *symtab;    /* symbols for this parse */
+  struct ast *ast;          /* most recently parsed AST */
+};
 
 /* symbol table */
 struct symbol {
@@ -31,7 +44,7 @@ struct symbol {
 /* simple symtab of fixed size */
 #define NHASH 9997
 
-struct symbol *lookup(char *);
+struct symbol *lookup(struct pcdata *pp, char *);
 
 /* list of symbols, for an argument list */
 struct symlist {
@@ -39,8 +52,8 @@ struct symlist {
   struct symlist *next;
 };
 
-struct symlist *newsymlist(struct symbol *sym, struct symlist *next);
-void symlistfree(struct symlist *sl);
+struct symlist *newsymlist(struct pcdata *pp, struct symbol *sym, struct symlist *next);
+void symlistfree(struct pcdata *pp, struct symlist *sl);
 
 /* node types
  * + - * / |
@@ -106,22 +119,22 @@ struct symasgn {
 };
 
 /* build an AST */
-struct ast *newast(int nodetype, struct ast *l, struct ast *r);
-struct ast *newcmp(int cmptype, struct ast *l, struct ast *r);
-struct ast *newfunc(int functype, struct ast *l);
-struct ast *newcall(struct symbol *s, struct ast *l);
-struct ast *newref(struct symbol *s);
-struct ast *newasgn(struct symbol *s, struct ast *v);
-struct ast *newnum(double d);
-struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
+struct ast *newast(struct pcdata *pp, int nodetype, struct ast *l, struct ast *r);
+struct ast *newcmp(struct pcdata *pp, int cmptype, struct ast *l, struct ast *r);
+struct ast *newfunc(struct pcdata *pp, int functype, struct ast *l);
+struct ast *newcall(struct pcdata *pp, struct symbol *s, struct ast *l);
+struct ast *newref(struct pcdata *pp, struct symbol *s);
+struct ast *newasgn(struct pcdata *pp, struct symbol *s, struct ast *v);
+struct ast *newnum(struct pcdata *pp, double d);
+struct ast *newflow(struct pcdata *pp, int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
 
 /* define a function */ 
-void dodef(struct symbol *name, struct symlist *syms, struct ast *stmts);
+void dodef(struct pcdata *pp, struct symbol *name, struct symlist *syms, struct ast *stmts);
 
 /* evaluate an AST */ 
-double eval(struct ast *);
+double eval(struct pcdata *pp, struct ast *);
 
 /* delete and free an AST */ 
-void treefree(struct ast *);
+void treefree(struct pcdata *pp, struct ast *);
 
 #endif
